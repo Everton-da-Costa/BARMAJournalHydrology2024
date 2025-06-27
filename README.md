@@ -52,9 +52,9 @@ This repository provides R scripts and data to replicate the time series analysi
 ├── output/             # Generated outputs (PDFs)
 │   └── classical_tests_example.pdf
 │
-├── .gitignore          # Files/folders to ignore in Git
+├── .gitignore                      # Files/folders to ignore in Git
 ├── BARMAJournalHydrology2024.Rproj # RStudio project file
-└── README.md           # Project overview
+└── README.md                       # Project overview
 ```
 
 ---
