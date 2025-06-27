@@ -47,7 +47,8 @@ This repository provides R scripts and data to replicate the time series analysi
 │   ├── application_itaparica.R
 │   ├── application_sobradinho.R
 │   ├── application_tres_marias.R
-│   └── classical_tests_example.Rmd
+│   ├── classical_tests_example.Rmd
+│   └── render_classical_tests_example.R
 │
 ├── output/             # Generated outputs (PDFs)
 │   └── classical_tests_example.pdf
@@ -78,6 +79,7 @@ This section details the contents of the repository, organized by directory and 
     *   `application_sobradinho.R`: Analysis script for replicating results for the Sobradinho reservoir.
     *   `application_tres_marias.R`: Analysis script for replicating results for the Três Marias reservoir.
     *   `classical_tests_example.Rmd`: R Markdown source file for the numerical example of the three classical tests.
+    *   `render_classical_tests_example.R`: R script to render the `classical_tests_example.Rmd` creating the  `classical_tests_example.pdf` in the `output` directory.
 *   `output/`
     *   `classical_tests_example.pdf`: The rendered PDF report generated from `classical_tests_example.Rmd`.
 *   `.gitignore`: Specifies intentionally untracked files to ignore.
