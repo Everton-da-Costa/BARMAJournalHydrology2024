@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # BARMAJournalHydrology2024
 
 This repository contains the R code and associated data for the scientific article:
