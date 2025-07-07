@@ -1,0 +1,48 @@
+# inst/CITATION
+
+# Citation for the main paper associated with the package
+cit_paper <- bibentry(
+  bibtype = "Article",
+  title   = "Test inferences and link function selection in dynamic beta modeling of seasonal hydro-environmental time series with temporary abnormal regimes",
+  author  = c(
+    person("Everton", "Costa"),
+    person("Francisco", "Cribari-Neto"),
+    person("Vinícius", "Scher")
+  ),
+  journal = "Journal of Hydrology",
+  year    = 2024,
+  volume  = 635,
+  pages   = "131489",
+  doi     = "10.1016/j.jhydrol.2024.131489"
+)
+
+# Citation for the package itself
+cit_pkg <- bibentry(
+  bibtype = "Manual",
+  title   = "BARMAJournalHydrology2024: An R package to replicate analysis from Costa, Cribari-Neto, and Scher (2024)",
+  author  = person(
+    given = "Everton",
+    family = "Costa",
+    email = "everto.cost@gmail.com.br",
+    role = c("aut", "cre")
+  ),
+  year    = 2024, # Or the current year
+  note    = paste0("R package version ", utils::packageVersion("BARMAJournalHydrology2024")),
+  url     = "https://github.com/everton-da-costa/BARMAJournalHydrology2024"
+)
+
+# Define the default citation entry
+meta <- list(
+  cite = cit_paper
+)
+
+# This function tells R what to print when citation() is called
+print.citation <- function(x, ...) {
+  # Start with a header
+  cat("To cite the paper where the methods are described, please use:\n\n")
+  print(x$cite, style = "Bibtex")
+  
+  # Optionally, you can also show how to cite the package itself
+  # cat("\nTo cite the R package itself, please use:\n\n")
+  # print(x$pkg, style = "Bibtex")
+}

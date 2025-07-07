@@ -1,0 +1,7 @@
+^LICENSE\.md$
+^.*\.Rproj$
+^\.Rproj\.user$
+^analysis$
+^output$
+^README\.html$
+^BARMAJournalHydrology2024\.Rproj$

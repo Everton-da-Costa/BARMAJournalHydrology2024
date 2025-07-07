@@ -31,10 +31,18 @@ library(knitr)
 
 # Load functions
 ```{r, load_functions, message=FALSE}
-source(here::here("R", "simuBarma.R"))
-source(here::here("R", "makeLinkStructure.R"))
-source(here::here("R", "barma3ClassicalTestsAuxFun.R"))
-source(here::here("R", "barma3ClassicalTests.R"))
+# source(here::here("R", "simu_barma.R"))
+# source(here::here("R", "make_link_structure.R"))
+# 
+# source(here::here("R", "barma_classical_tests.R"))
+# 
+# source(here::here("R", "inf_matrix_arma.R"))
+# source(here::here("R", "score_vector_arma.R"))
+# source(here::here("R", "loglik_terms_ar.R"))
+# source(here::here("R", "loglik_terms_ma.R"))
+
+# Load all project functions and dependencies
+devtools::load_all()
 
 # For reproducibility of the example from Costa, Cribari-Neto and Scher (2024).
 seed <- 2
@@ -76,11 +84,11 @@ A logit link function is assumed for $g(\mu_t)$.
 n <- 250
 alpha_true <- 0
 varphi_true <- 0.4
-theta_true <- NA # Implies no MA part in simuBarma
+theta_true <- NA # Implies no MA part in simu_barma
 phi_true <- 20
 
 set.seed(seed) # Ensure reproducibility for this specific simulation
-y <- simuBarma(
+y <- simu_barma(
   n = n,
   alpha = alpha_true,
   varphi = varphi_true,
@@ -114,7 +122,7 @@ ar_vec <- 1
 ma_vec <- 1:4
 rest_ma <- 3:6
 
-fit <- barma3ClassicalTests(
+fit <- barma_classical_tests(
   y = y,
   ar = ar_vec,
   ma = ma_vec,

@@ -1,0 +1,47 @@
+Package: BARMAJournalHydrology2024
+Title: Test Inferences and Link Function Selection in Dynamic Beta
+    Modeling of Seasonal Hydro-environmental Time Series with Temporary
+    Abnormal Regimes
+Version: 1.0.0
+Authors@R: c(
+    person(given = "Everton",
+           family = "Costa",
+           email = "everto.cost@gmail.com",
+           role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0001-7580-2639",
+                       Contributions = "Conceptualization, Formal analysis, Software, Validation, Visualization")),
+    person(given = "Francisco",
+           family = "Cribari-Neto",
+           role = "aut",
+           comment = c(ORCID = "0000-0002-5909-6698",
+                       Contributions = "Conceptualization, Formal analysis, Funding acquisition, Investigation, Methodology, Project administration, Resources, Supervision, Validation, Writing")),
+    person(given = "Vinicius",
+           family = "Scher",
+           role = "aut",
+           comment = c(ORCID = "0000-0003-0406-0265",
+                       Contributions = "Formal analysis, Investigation, Methodology, Resources, Software, Visualization"))
+    )
+Description: Provides R code and data to replicate the analysis in Costa, 
+    Cribari-Neto, and Scher (2024) <doi:10.1016/j.jhydrol.2024.131489>. 
+    The paper considers the modeling and forecasting of hydro-environmental 
+    time series subject to seasonal fluctuations and prolonged droughts using 
+    a class of dynamic beta (BARMA) models. The code addresses the accuracy of 
+    hypothesis tests and introduces a new model selection criterion ('the scout score') 
+    for selecting the link function of the model.
+License: MIT + file LICENSE
+URL: https://doi.org/10.1016/j.jhydrol.2024.131489
+BugReports: https://github.com/everton-da-costa/BARMAJournalHydrology2024/issues
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.2
+RdMacros: Rdpack
+Imports: 
+    lbfgs,
+    Rdpack
+Suggests:
+    forecast,
+    here,
+    moments,
+    rmarkdown,
+    tseries,
+    zoo

@@ -1,12 +1,8 @@
-# =============================================================================
-# Function for Classical Hypothesis Tests in \betaARMA Models
-# =============================================================================
-
 #' @title Classical Hypothesis Tests in \eqn{\beta}ARMA Models
 #' @md
 #'
 #' @description
-#' This R function, `barma3ClassicalTests`, performs a suite of classical
+#' This R function, `barma_classical_tests`, performs a suite of classical
 #' hypothesis tests -- Wald(W), Likelihood Ratio (LR), and Rao Score (RS) --
 #' for Beta Autoregressive Moving Average (\eqn{\beta}ARMA) models. These
 #' models are particularly useful for doubly-bounded time series, such as
@@ -26,7 +22,7 @@
 #'   average models. TEST, 18(3), 529--545. (Erratum: TEST, 26, 2017,
 #'   451--459).
 #' - This function implements the classical hypothesis tests presented in the
-#'   study: Costa, E.; Cribari-Neto, F.; Scher, V.T. (2024). Test inferences 
+#'   study: Costa, E.; Cribari-Neto, F.; Scher, V.T. (2024). Test inferences
 #'   and link function selection in dynamic beta modeling of seasonal
 #'   hydro-environmental time series with temporary abnormal regimes.
 #'   Journal of Hydrology, 638, 131489.
@@ -157,6 +153,15 @@
 #'   }
 #' }
 #'
+#' @references
+#' \insertRef{costa_cribari_scher_2024}{BARMAJournalHydrology2024}
+#'
+#' \insertRef{rocha_cribari_neto_2009}{BARMAJournalHydrology2024}
+#'
+#' @seealso
+#' To get the formal citation for this package, run:
+#' `citation("BARMAJournalHydrology2024")`.
+#'
 #' @examples
 #' \dontrun{
 #' # Assuming 'y' is a time series object (ts) with values in (0,1)
@@ -164,60 +169,31 @@
 #' # in a BARMA(1,1) model.
 #'
 #' # To test AR components (H0: varphi_1 = 0)
-#' # Note: This requires the actual barma3ClassicalTests function and its
+#' # Note: This requires the actual barma_classical_tests function and its
 #' # dependencies to be available and working.
-#' # results_test_ar <- barma3ClassicalTests(y = y, ar = 1, ma = 1,
+#' # results_test_ar <- barma_classical_tests(y = y, ar = 1, ma = 1,
 #' #                                        link = "logit", rest_ar = 1)
 #' # print(results_test_ar$tests)
 #'
 #' # To test MA components (H0: theta_1 = 0)
-#' # results_test_ma <- barma3ClassicalTests(y = y, ar = 1, ma = 1,
+#' # results_test_ma <- barma_classical_tests(y = y, ar = 1, ma = 1,
 #' #                                        link = "logit", rest_ma = 1)
 #' # print(results_test_ma$tests)
 #'
 #' # To estimate model without running specific tests (if arma_only = TRUE)
-#' # model_only <- barma3ClassicalTests(y = y, ar = 1, ma = 1,
+#' # model_only <- barma_classical_tests(y = y, ar = 1, ma = 1,
 #' #                                   link = "logit", arma_only = TRUE)
 #' # print(model_only$unrestricted_model)
 #' }
 #'
-#' @references
-#' Costa, E., Cribari-Neto, F., & Scher, V. T. (2024). Test inferences and
-#' link function selection in dynamic beta modeling of seasonal
-#' hydro-environmental time series with temporary abnormal regimes.
-#' *Journal of Hydrology*, *638*, 131489.
-#' \doi{10.1016/j.jhydrol.2024.131489}.
-#'
-#' Rocha, A.V. & Cribari-Neto, F. (2009). Beta autoregressive moving
-#' average models. *TEST*, *18*(3), 529--545. (Erratum: *TEST*, *26*,
-#' 2017, 451--459).
-#'
-#' @section BibTeX Citation for Costa et al. (2024):
-#' For users who wish to cite the primary methodological paper by
-#' Costa et al. (2024) that underpins aspects of this function, the
-#' BibTeX entry is provided below for convenience:
-#' ```
-#' @article{Costa+Cribari+Scher_2024,
-#'   title     = {Test inferences and link function selection in dynamic beta
-#'                 modeling of seasonal hydro-environmental time series with
-#'                 temporary abnormal regimes},
-#'   author    = {Costa, E. and Cribari-Neto, F. and Scher, V. T.},
-#'   journal   = {Journal of Hydrology},
-#'   volume    = {638},
-#'   pages     = {131489},
-#'   year      = {2024},
-#'   doi       = {10.1016/j.jhydrol.2024.131489}
-#' }
-#' ```
+#' @keywords ts models regression
 #' @export
-#' @keywords \eqn{\beta}ARMA model; climate change; drought;
-#' hydro-environmental data; link function; seasonality
-#'
-# =============================================================================
-
-
-barma3ClassicalTests <- function(y, ar = NA, ma = NA, link = "logit",
-                                 rest_ar = NA, rest_ma = NA, arma_only = FALSE) {
+barma_classical_tests <- function(y,
+                                  ar = NA, ma = NA,
+                                  link = "logit",
+                                  rest_ar = NA,
+                                  rest_ma = NA,
+                                  arma_only = FALSE) {
   # Link functions ============================================================
 
   # Check if the link argument is a character string or an expression
@@ -228,32 +204,24 @@ barma3ClassicalTests <- function(y, ar = NA, ma = NA, link = "logit",
       linktemp <- eval(link)
     }
   }
-  
+
   # Set up the link function based on the provided link argument
   if (linktemp == "logit") {
-    
     # Use make.link function for logit link (efficient C implementation)
     stats <- make.link("logit")
-    
   } else if (linktemp == "probit") {
-    
     # Use make.link function for probit link
     stats <- make.link("probit")
-    
   } else if (linktemp == "cloglog") {
-    
     # Use make.link function for cloglog link
     stats <- make.link("cloglog")
-    
   } else if (linktemp == "loglog") {
-    
     # Manually define linkfun, linkinv, and mu.eta for loglog link
     stats <- list()
-    
+
     stats$linkfun <- function(mu) -log(-log(mu))
     stats$linkinv <- function(eta) exp(-exp(-eta))
     stats$mu.eta <- function(eta) exp(-exp(-eta)) * exp(-eta)
-    
   } else {
     # If the provided link is not supported, raise an error
     stop(
@@ -263,7 +231,7 @@ barma3ClassicalTests <- function(y, ar = NA, ma = NA, link = "logit",
       )
     )
   }
-  
+
   # Create a list with the link function details
   link1 <- structure(list(
     link = linktemp,
@@ -271,7 +239,7 @@ barma3ClassicalTests <- function(y, ar = NA, ma = NA, link = "logit",
     linkinv = stats$linkinv,
     mu.eta = stats$mu.eta
   ))
-  
+
   # Assign link function components to separate variables
   linkfun <- link1$linkfun
   linkinv <- link1$linkinv
@@ -367,9 +335,8 @@ barma3ClassicalTests <- function(y, ar = NA, ma = NA, link = "logit",
   z_test <- list()
 
   # ========================================================================= #
-  # ARMA model
+  # BARMA model
   # ========================================================================= #
-
   if (any(is.na(ar) == F) && any(is.na(ma) == F)) {
     m <- max(p, q, na.rm = T)
 
@@ -593,7 +560,6 @@ barma3ClassicalTests <- function(y, ar = NA, ma = NA, link = "logit",
   # ============================================================================
   # BAR Model
   # ============================================================================
-
   if (any(is.na(ar) == F) && any(is.na(rest_ma) == F) &&
     arma_only == FALSE) {
     m <- max(p, na.rm = T)
@@ -1025,9 +991,8 @@ barma3ClassicalTests <- function(y, ar = NA, ma = NA, link = "logit",
   }
 
   # ============================================================================
-  # MA model
+  # BMA model
   # ============================================================================
-
   if (any(is.na(ma) == F) && any(is.na(rest_ar) == F) &&
     arma_only == FALSE) {
     m <- max(q, na.rm = T)
@@ -1545,109 +1510,23 @@ barma3ClassicalTests <- function(y, ar = NA, ma = NA, link = "logit",
   # Classical Hypothesis Tests: Wald, LR, and Rao Score
   # Methodological details based on Costa et al. (2024) J.Hydrol. 638, 131489
   # ===========================================================================
-
   if (arma_only == FALSE &&
-    !is.null(unrestricted_model$arma_vcov) && inv_inf_matrix_rest == 0 &&
-    unrestricted_model$conv == 0 && conv_rest == 0) {
+      !is.null(unrestricted_model$arma_vcov) && inv_inf_matrix_rest == 0 &&
+      unrestricted_model$conv == 0 && conv_rest == 0) {
     # Proceed with tests if: not 'arma_only', models converged, vcov ready.
 
-    # --- Prepare components for hypothesis tests ---
-    # Unrestricted estimates (for Wald)
-    nu_hat <- unrestricted_model$coeff
-    # Unrestricted log-likelihood (for LR)
-    loglik_unrest <- unrestricted_model$loglik
-
-    # Inv. info matrix (naive restricted): uses a_N. For Sr*, Se*.
-    mat_vcov_naive <- solve(matrix_inf_naive, tol = 1e-20)
-    # Inv. info matrix (mfun restricted): uses a_NN. For Sr, Se (recommended).
-    mat_vcov_mfun <- solve(matrix_inf_mfun, tol = 1e-20)
-
-    # --- Wald Test (W1 from Costa et al., 2024) ---
-    # Uses variance-covariance matrix from the unrestricted model.
-    W_expec_inf_inv <- unrestricted_model$arma_vcov
-    W_solve_matrix <- solve(W_expec_inf_inv[rest, rest], tol = 1e-20)
-    W_stat <- t(nu_hat[rest]) %*% W_solve_matrix %*% nu_hat[rest]
-    W_pval <- pchisq(W_stat, df = num_rest, lower.tail = FALSE)
-    W_res <- c(W_stat, W_pval)
-    names(W_res) <- c("W_stat", "W_pval")
-    z_test$W_res <- W_res
-
-    # --- Wald Test (W2 from Costa et al., 2024) ---
-    # Uses var-cov matrix from restricted model (estimated with a_NN via mfun).
-    W2_expec_inf_inv <- mat_vcov_mfun
-    W2_solve_matrix <- solve(W2_expec_inf_inv[rest, rest], tol = 1e-20)
-    W2_stat <- t(nu_hat[rest]) %*% W2_solve_matrix %*% nu_hat[rest]
-    W2_pval <- pchisq(W2_stat, df = num_rest, lower.tail = FALSE)
-    W2_res <- c(W2_stat, W2_pval)
-    names(W2_res) <- c("W2_stat", "W2_pval")
-    z_test$W2_res <- W2_res
-
-    # --- Likelihood Ratio Test (LR1 "naive" from Costa et al., 2024) ---
-    # Uses loglik from restricted model estimated with its own a_N.
-    # Can be inaccurate or negative if a_N (null model) < a_NN (non-null).
-    LR_naive_stat <- 2 * (loglik_unrest - loglik_restr_naive)
-    LR_naive_pval <- pchisq(LR_naive_stat, df = num_rest, lower.tail = FALSE)
-    LR_naive_res <- c(LR_naive_stat, LR_naive_pval, loglik_restr_naive)
-    names(LR_naive_res) <- c("LR_naive_stat", "LR_naive_pval", "LR_naive_loglik")
-    z_test$LR_naive_res <- LR_naive_res
-
-    # --- Likelihood Ratio Test (LR2 "adjusted" from Costa et al., 2024) ---
-    # Restricted model (est. with a_N) loglik (loglik_restr_m0) is adjusted:
-    # sums only the last n-a_NN individual log-likelihoods.
-    LR_m0_stat <- 2 * (loglik_unrest - loglik_restr_m0)
-    LR_m0_pval <- pchisq(LR_m0_stat, df = num_rest, lower.tail = FALSE)
-    LR_m0_res <- c(LR_m0_stat, LR_m0_pval, loglik_restr_m0)
-    names(LR_m0_res) <- c("LR_m0_stat", "LR_m0_pval", "LR_m0_loglik")
-    z_test$LR_m0_res <- LR_m0_res
-
-    # --- Likelihood Ratio Test (LR3 "recommended" from Costa et al., 2024) ---
-    # Restricted model estimated using a_NN (via mfun) for loglik_restr_mfun.
-    # Ensures same number of likelihood terms; non-negative statistic.
-    LR_mfun_stat <- 2 * (loglik_unrest - loglik_restr_mfun)
-    LR_mfun_pval <- pchisq(LR_mfun_stat, df = num_rest, lower.tail = FALSE)
-    LR_mfun_res <- c(LR_mfun_stat, LR_mfun_pval, loglik_restr_mfun)
-    names(LR_mfun_res) <- c("LR_mfun_stat", "LR_mfun_pval", "LR_mfun_loglik")
-    z_test$LR_mfun_res <- LR_mfun_res
-
-    # --- Rao Score Test (Sr* "naive reduced" from Costa et al., 2024) ---
-    # Uses score (score_vec_naive) & var-cov (mat_vcov_naive) from restricted
-    # model estimated with its own a_N. Can lead to size distortions.
-    R_naive_stat <- (t(score_vec_naive[rest]) %*%
-      mat_vcov_naive[rest, rest] %*%
-      score_vec_naive[rest])
-    R_naive_pval <- pchisq(R_naive_stat, df = num_rest, lower.tail = FALSE)
-    R_naive_res <- c(R_naive_stat, R_naive_pval)
-    names(R_naive_res) <- c("R_naive_stat", "R_naive_pval")
-    z_test$R_naive_res <- R_naive_res
-
-    # --- Rao Score Test (Se* "naive extended" from Costa et al., 2024) ---
-    # Uses score (score_vec_naive) & var-cov (mat_vcov_naive) from restricted
-    # model estimated with its own a_N. Original form by C.R. Rao.
-    R_exp_stat <- t(score_vec_naive) %*% mat_vcov_naive %*% score_vec_naive
-    R_exp_pval <- pchisq(R_exp_stat, df = num_rest, lower.tail = FALSE)
-    R_exp_res <- c(R_exp_stat, R_exp_pval)
-    names(R_exp_res) <- c("R_exp_stat", "R_exp_pval")
-    z_test$R_expanded_res <- R_exp_res
-
-    # --- Rao Score Test (Sr "recommended reduced" from Costa et al., 2024) ---
-    # Uses score (score_vec_mfun) & var-cov (mat_vcov_mfun) from restricted
-    # model estimated with a_NN (via mfun). More accurate.
-    R_mfun_stat <- (t(score_vec_mfun[rest]) %*%
-      mat_vcov_mfun[rest, rest] %*%
-      score_vec_mfun[rest])
-    R_mfun_pval <- pchisq(R_mfun_stat, df = num_rest, lower.tail = FALSE)
-    R_mfun_res <- c(R_mfun_stat, R_mfun_pval)
-    names(R_mfun_res) <- c("R_mfun_stat", "R_mfun_pval")
-    z_test$R_mfun_res <- R_mfun_res
-
-    # --- Rao Score Test (Se "recommended extended" from Costa et al., 2024) ---
-    # Uses score (score_vec_mfun) & var-cov (mat_vcov_mfun) from restricted
-    # model estimated with a_NN (via mfun). More accurate.
-    R_exp_mfun_stat <- t(score_vec_mfun) %*% mat_vcov_mfun %*% score_vec_mfun
-    R_exp_mfun_pval <- pchisq(R_exp_mfun_stat, df = num_rest, lower.tail = FALSE)
-    R_exp_mfun_res <- c(R_exp_mfun_stat, R_exp_mfun_pval)
-    names(R_exp_mfun_res) <- c("R_exp_mfun_stat", "R_exp_mfun_pval")
-    z_test$R_exp_mfun_res <- R_exp_mfun_res
+    z_test <- compute_classical_tests(
+      unrestricted_model = unrestricted_model,
+      loglik_restr_naive = loglik_restr_naive,
+      loglik_restr_m0 = loglik_restr_m0,
+      loglik_restr_mfun = loglik_restr_mfun,
+      score_vec_naive = score_vec_naive,
+      score_vec_mfun = score_vec_mfun,
+      matrix_inf_naive = matrix_inf_naive,
+      matrix_inf_mfun = matrix_inf_mfun,
+      rest = rest,
+      num_rest = num_rest
+    )
   }
 
   final <- list(

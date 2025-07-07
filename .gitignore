@@ -1,1 +1,27 @@
-.Rproj.user
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data
+.RData
+
+# User-specific files
+.Ruserdata
+
+# RStudio files
+.Rproj.user/
+
+# Knitr and R Markdown generated files
+*.html
+*.pdf
+*.docx
+
+# Package build files
+*.Rcheck/
+*tar.gz
+
+# Output directory
+output/
+
+# macOS files
+.DS_Store
