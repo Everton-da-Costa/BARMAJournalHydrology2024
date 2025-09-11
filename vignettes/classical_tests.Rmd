@@ -1,0 +1,511 @@
+---
+title: "Dynamic Beta Modeling of Seasonal Hydro-environmental Time Series - Test Inferences and Link Function Selection with Temporary Abnormal Regimes"
+subtitle: "Classical Tests"
+author: "Everton da Costa"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    fig_caption: true
+bibliography: ../inst/REFERENCES.bib
+vignette: >
+  %\VignetteIndexEntry{Classical Tests}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, pdf_output, include=FALSE}
+# ---
+# title: "Dynamic Beta Modeling of Seasonal Hydro-environmental Time Series"
+# subtitle: "Test Inferences and Link Function Selection with Temporary Abnormal Regimes"
+# author: "Everton da Costa"
+# date: "`r Sys.Date()`"
+# output:
+#   pdf_document:
+#     toc: true
+#     toc_depth: 3
+#     number_sections: true
+#     fig_caption: true
+#     keep_tex: true  # Optional: keeps the intermediate LaTeX file
+#     highlight: pygments  # Syntax highlighting style
+# bibliography: ../inst/REFERENCES.bib
+# documentclass: article
+# geometry: margin=1in  # Adjust margins
+# fontsize: 11pt
+# linkcolor: blue  # Hyperlink color
+# urlcolor: blue
+# ---
+```
+
+```{r, html_output, include=FALSE}
+# title: "Dynamic Beta Modeling of Seasonal Hydro-environmental Time Series"
+# subtitle: "Test Inferences and Link Function Selection with Temporary Abnormal Regimes"
+# author: "Everton da Costa"
+# date: "`r Sys.Date()`"
+# output:
+#   rmarkdown::html_vignette:
+#     toc: true
+#     toc_depth: 3
+#     number_sections: true
+#     fig_caption: true
+# bibliography: ../inst/REFERENCES.bib
+# vignette: >
+#   %\VignetteIndexEntry{BARMA Models for Hydro-environmental Time Series}
+#   %\VignetteEngine{knitr::rmarkdown}
+#   %\VignetteEncoding{UTF-8}
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 3.5,
+  fig.align = "center",
+  warning = FALSE,
+  message = FALSE
+)
+
+library(BARMAJournalHydrology2024)
+library(forecast)   # time series
+library(ggplot2)    # plotting
+library(zoo)        # yearmon handling
+library(gridExtra)  # grid.arrange for plots
+
+library(dplyr)
+```
+
+```{r, config_data_visualization, include=FALSE}
+# Series size and end time
+sample_size <- length(itaparica_ts)
+end_time_series <- time(itaparica_ts)[sample_size] + 1
+
+# Size font of the plot
+ggplot_size_font <- 9
+
+# ggplot theme
+ggplot_theme <- theme(
+  legend.position = "bottom",
+  title = element_text(size = ggplot_size_font),
+  axis.text = element_text(size = ggplot_size_font),
+  axis.title = element_text(size = ggplot_size_font),
+  legend.text = element_text(size = ggplot_size_font),
+  legend.title = element_text(size = ggplot_size_font)
+  )
+
+# ggplot theme forecast plot
+ggplot_theme_forecast <- theme(
+  legend.position = "right",
+  title = element_text(size = ggplot_size_font),
+  axis.text = element_text(size = ggplot_size_font),
+  axis.title = element_text(size = ggplot_size_font),
+  legend.text = element_text(size = ggplot_size_font),
+  legend.title = element_text(size = ggplot_size_font)
+)
+
+# y-axis scale
+ggplot_scale_y <-
+  scale_y_continuous(
+    breaks = seq(0.1, 0.9, 0.10),
+    limits = c(0.1, 0.9)
+  )
+
+# x-axis scale
+ggplot_scale_x <- scale_x_continuous(
+    breaks = seq(0, 250, 20),
+    limits = c(0, 250)
+  )
+```
+
+
+# Classical tests
+
+## Introduction
+In modern data science, it's easy to fit complex models using off-the-shelf 
+libraries. However, ensuring the statistical foundations of a model are sound 
+is critical for building trust and avoiding incorrect conclusions. This 
+vignette demonstrates a deeper level of model validation: implementing and 
+comparing classical hypothesis tests (Wald, LR, Score) for $\beta$ARMA model. 
+The focus is on handling a subtle methodological challenge that can lead to 
+misleading results, showcasing a commitment to rigorous and reliable modeling.
+
+In $\beta$ARMA models, the conditional log-likelihood sum starts from $t=a+1$,
+where $a = \max(p,q)$ with $p$ and $q$ being the AR and MA orders, respectively.
+A crucial issue arises if $a$ for the null model ($a_N$) is less than $a$ for 
+the non-null/unrestricted model ($a_{NN}$). This report will illustrate such a 
+scenario ($a_N < a_{NN}$) and show how to apply the tests correctly. 
+If ignored, this technical issue can lead to unreliable p-values and, in a 
+real-world setting, could cause a data scientist to make incorrect decisions 
+about which model features are significant.
+
+The numerical results presented here replicate the example in Section 3.1 of 
+Costa, Cribari-Neto and Scher (2024).
+
+## Data Simulation
+We simulate a time series of length $n=250$ from a $\beta$AR(1) process.
+The true parameters are: $\alpha = 0$, $\varphi_1 = 0.4$, $\phi = 20$. 
+A logit link function is assumed for $g(\mu_t)$.
+
+```{r, data_simulation_setup}
+n <- 250
+alpha_true <- 0
+varphi_true <- 0.4
+theta_true <- NA # Implies no MA part in simu_barma
+phi_true <- 20
+
+# Link function
+link_function <- "logit"
+
+# Reproducibility
+seed <- 2
+```
+
+```{r, data_simulation}
+set.seed(seed) # Ensure reproducibility for this specific simulation
+y <- simu_barma(
+  n = n,
+  alpha = alpha_true,
+  varphi = varphi_true,
+  theta = theta_true,
+  phi = phi_true,
+  link = link_function
+)
+```
+
+## Data Visualization
+
+```{r, data_simul_plot, include=FALSE}
+
+# Data frame for ggplot 
+y_df <- data.frame(y = y, years = seq_along(y))
+
+# Time series plot
+ggplot_data_simulation <- ggplot(y_df, aes(years, y)) +
+  geom_point(size = 0.5) +
+  geom_line(aes(group = 1)) +
+  ggplot_scale_x +
+  ggplot_scale_y +
+  ggplot_theme
+
+```
+
+```{r, print_data_simul_plot, echo=FALSE, fig.cap = "Simulated time series from a $\\beta$-AR(1) process."}
+print(ggplot_data_simulation)
+```
+
+## Parameter Estimation
+We fit an unrestricted $\beta$ARMA(1,4) model and a restricted $\beta$ARMA(1,0)
+model.
+Here, 
+$a_{NN} = \max(1,4) = 4$ for the unrestricted model, and
+$a_N = \max(1,0) = 1$ for the restricted model.
+
+```{r, estimation_setup, message=FALSE}
+ar_vec <- 1
+ma_vec <- 1:4
+rest_ma <- 3:6
+```
+
+```{r, estimation, message=FALSE}
+fit <- barma_classical_tests(
+  y = y,
+  ar = ar_vec,
+  ma = ma_vec,
+  rest_ma = rest_ma
+)
+
+fit_unrest <- fit$unrestricted_model
+fit_rest <- fit$ar_restricted_model
+
+unrest_coeff <- round(fit_unrest$model, 4)
+rest_coeff <- round(fit_rest$model, 4)
+```
+
+```{r, print_estimation_unrestricted, message=FALSE}
+# Unrestricted Model BARMA(1,4) Coefficients:
+knitr::kable(
+  unrest_coeff,
+  caption = 
+    "Estimated coefficients for the $\\beta ARMA(1,4)$ model - Unrestricted Model."
+)
+```
+
+```{r, print_estimation_restricted, message=FALSE}
+# Restricted Model BARMA(1,0) Coefficients:
+knitr::kable(
+  rest_coeff,
+  caption = 
+    "Estimated coefficients for the $\\beta ARMA(1,0)$ model - Restricted Model."
+)
+```
+
+## Classical Hypothesis Tests: LR, Rao Score, and Wald
+This section details the application of the Wald, Likelihood Ratio (LR), and 
+Rao Score tests. All three tests are employed to evaluate a common hypothesis
+regarding the parameters of the $\beta$ARMA model. Specifically, we test the 
+joint significance of the first four moving average (MA) parameters by comparing 
+an unrestricted $\beta$ARMA(1,4) model against a restricted $\beta$ARMA(1,0)
+model.
+
+The null hypothesis:
+  $H_0: \theta_1 = \theta_2 = \theta_3 = \theta_4 = 0$.
+The alternative hypothesis, $H_1$, is that at least one of these $\theta_j$ 
+  parameters (for $j=1,2,3,4$) is non-zero.
+
+Under the null hypothesis, the test statistics for the Wald, LR, and Rao Score 
+tests asymptotically follow a $\chi^2$ (chi-squared) distribution. Since there 
+are four parameters being restricted under $H_0$ 
+  (namely $\theta_1, \theta_2, \theta_3, \theta_4$), 
+the degrees of freedom for this $\chi^2$ distribution is 4.
+
+A key focus of this report, following the findings of 
+Costa, Cribari-Neto and Scher (2024), is addressing the methodological 
+challenge that arises when the number of initial observations used for 
+conditioning differs between the null model ($a_N = \max(1,0) = 1$) and the
+unrestricted model ($a_{NN} = \max(1,4) = 4$). We will demonstrate both standard 
+and adjusted versions of these tests designed for such $a_N < a_{NN}$ 
+  scenarios to ensure robust inference.
+
+### Likelihood Ratio Test
+The `barma3ClassicalTests` 
+function provides three versions of the LR statistic to address this:
+  
+  \begin{itemize}
+\item LR1 (Naive): The conventional LR statistic, which may be unreliable in 
+the current $a_N < a_{NN}$ scenario.
+
+\item LR2 (Adjusted): An LR statistic with an adjustment to the restricted 
+model's log-likelihood to better align the comparison with the unrestricted 
+model.
+
+\item LR3 (Recommended): The LR statistic specifically recommended by 
+Costa, Cribari-Neto and Scher (2024) for situations like ours, $a_N < a_{NN}$.
+\end{itemize}
+
+The R code below presents these three statistics.
+
+```{r}
+# Classical tests results
+classical_tests_results <- fit$classical_tests
+```
+
+```{r}
+# Extract all LR statistics and p-values
+LR1_stat <- classical_tests_results$LR_naive_res[1]
+LR1_pval <- classical_tests_results$LR_naive_res[2]
+
+LR2_stat <- classical_tests_results$LR_m0_res[1]
+LR2_pval <- classical_tests_results$LR_m0_res[2]
+
+LR3_stat <- classical_tests_results$LR_mfun_res[1]
+LR3_pval <- classical_tests_results$LR_mfun_res[2]
+
+# Organize results into a data frame
+lr_results_df <- data.frame(
+  Output = c(names(LR1_stat), names(LR2_stat), names(LR3_stat)),
+  Test_Version = c("LR1 (Naive)", "LR2 (Adjusted)", "LR3 (Recommended)"),
+  Statistic = c(LR1_stat, LR2_stat, LR3_stat),
+  p_value = c(LR1_pval, LR2_pval, LR3_pval)
+)
+
+rownames(lr_results_df) <- NULL
+
+# Create a table
+knitr::kable(
+  lr_results_df,
+  caption = "Likelihood Ratio (LR) results for the joint significance of MA
+  parameters $(H_0: \\theta_1=\\theta_2=\\theta_3=\\theta_4=0)$.",
+  col.names = c("Output", "Test Version", "Statistic", "p-value"),
+  digits = 4,
+  booktabs = TRUE, 
+  linesep = ""
+)
+```
+
+
+### Rao Score Test
+The Rao Score test, provides another way to test hypotheses, requiring only the
+estimation of the restricted model. It examines the gradient (score) of the
+log-likelihood function at the restricted estimates.
+Similar to the LR test, adjustments are crucial when $a_N < a_{NN}$ to ensure 
+accurate inference, as discussed by Costa, Cribari-Neto and Scher (2024). 
+The output below presents:
+
+Score Vectors:
+
+- `ar_score_vec_arma_naive`: 
+The score vector, with parameters estimated using its own $a_N$.
+
+- `ar_score_vec_arma_mfun`: 
+The score vector, with parameters estimated using $a_{NN}$.
+
+Score Test Statistics:
+
+**Naive Versions** (using score_vec_naive and mat_vcov_naive from model with 
+$a_N$):
+
+- `R_naive_res` (Sr$^*$): A form of the Score statistic that can 
+exhibit size distortions in the $a_N < a_{NN}$ case.
+
+- `R_expanded_res` (Se$^*$): The the Score statistic, also using $a_N$.
+
+**Recommended Versions**:
+
+- `R_mfun_res` (Sr): The reduced form of the Score statistic, with parameters
+estimated using $a_{NN}$. 
+
+- `R_exp_mfun_res` (Se): The expanded form of the Score statistic, with
+parameters estimated using $a_{NN}$. 
+
+The R code below displays these components. For detailed theoretical 
+justifications and the precise nature of the 'mfun' object, readers should
+consult Costa, Cribari-Neto and Scher (2024).
+
+```{r}
+# Extract all Score statistics and p-values
+Sr_star_stat <- classical_tests_results$R_naive_res[1]
+Sr_star_pval <- classical_tests_results$R_naive_res[2]
+
+Se_star_stat <- classical_tests_results$R_expanded_res[1]
+Se_star_pval <- classical_tests_results$R_expanded_res[2]
+
+Sr_stat <- classical_tests_results$R_mfun_res[1]
+Sr_pval <- classical_tests_results$R_mfun_res[2]
+
+Se_stat <- classical_tests_results$R_exp_mfun_res[1]
+Se_pval <- classical_tests_results$R_exp_mfun_res[2]
+
+# --- 2. Display the diagnostic score vectors ---
+cat("Score Vector (conditioned on a_N):\n")
+print(round(fit$ar_restricted_model$ar_score_vec_arma_naive, 4))
+
+cat("\nScore Vector (conditioned on a_NN):\n")
+print(round(fit$ar_restricted_model$ar_score_vec_arma_mfun, 4))
+
+# Organize the final test statistics into a data frame
+rao_results_df <- data.frame(
+  Output = c(
+    names(Sr_star_stat),
+    names(Se_star_stat),
+    names(Sr_stat),
+    names(Se_stat)
+    ),
+  Test_Version = c(
+    "Sr* (Naive Reduced)", 
+    "Se* (Naive Extended)",
+    "Sr (Recommended Reduced)", 
+    "Se (Recommended Extended)"
+  ),
+  Statistic = c(Sr_star_stat, Se_star_stat, Sr_stat, Se_stat),
+  p_value = c(Sr_star_pval, Se_star_pval, Sr_pval, Se_pval)
+)
+
+rownames(rao_results_df) <- NULL
+
+# Create the table for the test results
+knitr::kable(
+  rao_results_df,
+  caption = "Rao Score test results for the joint significance of MA parameters
+  $(H_0: \\theta_1=\\theta_2=\\theta_3=\\theta_4=0)$.",
+  col.names = c("Output", "Test Version", "Statistic", "p-value"),
+  digits = 4,
+  booktabs = TRUE,
+  linesep = ""
+)
+```
+
+### Wald Test
+The Wald test is another method for testing hypotheses about the model 
+parameters. It primarily uses information from the unrestricted model, 
+specifically the parameter estimates and their variance-covariance matrix, 
+to assess the specified null hypothesis 
+($H_0: \theta_1 = \theta_2 = \theta_3 = \theta_4 = 0$).
+
+\begin{itemize}
+\item W$_1$: This is the conventional Wald statistic, which employs the
+variance-covariance matrix obtained from the unrestricted $\beta$ARMA(1,4) model.
+\item W$_2$: This version, also discussed by 
+Costa, Cribari-Neto and Scher (2024). uses an alternative way to estimate the
+information matrix involved in the test construction.
+\end{itemize}
+
+```{r}
+# Extract Wald statistics and p-values
+W1_stat <- classical_tests_results$W_res[1]
+W1_pval <- classical_tests_results$W_res[2]
+
+W2_stat <- classical_tests_results$W2_res[1]
+W2_pval <- classical_tests_results$W2_res[2]
+
+# Organize results into a data frame
+wald_results_df <- data.frame(
+    Output = c(
+    names(W1_stat),
+    names(W2_stat)
+    ),
+  Test_Version = c("W1 (Standard)", "W2 (Adjusted)"),
+  Statistic = c(W1_stat, W2_stat),
+  p_value = c(W1_pval, W2_pval)
+)
+
+rownames(wald_results_df) <- NULL
+
+# Create the polished table
+knitr::kable(
+  wald_results_df,
+  caption = "Wald test results for the joint significance of MA parameters 
+  $(H_0: \\theta_1=\\theta_2=\\theta_3=\\theta_4=0)$.",
+  col.names = c("Output", "Test Version", "Statistic", "p-value"),
+  digits = 4,
+  booktabs = TRUE,
+  linesep = ""
+)
+```
+
+## Interpreting the Test Results
+
+Across the board, the recommended, adjusted tests 
+(LR3, Sr, Se, and the Wald tests) consistently produce high p-values 
+(e.g., p = 0.9898 for LR3 , p = 0.9862 for Sr and Se ), leading to the same 
+conclusion: we do not reject the null hypothesis ($H_0$).
+This is the correct inference, as the data was simulated from a true 
+$\beta$AR(1) model with no MA components.
+
+In contrast, the naive LR$_1$ statistic produced a negative value, which is 
+nonsensical for a test statistic that should follow a $\chi^2$ distribution, 
+highlighting its unreliability in this scenario.
+
+This confirms the central finding from the source paper: using the 
+methodologically correct, adjusted tests is critical for accurate inference. 
+This example demonstrates the ability to not only implement these tests but 
+also to select the appropriate version to ensure robust conclusions.
+
+## Conclusion
+
+This vignette successfully demonstrated the implementation of classical Wald, 
+Likelihood Ratio, and Rao Score hypothesis tests for $\beta$ARMA time series 
+models, replicating the findings of Costa, Cribari-Neto, and Scher (2024).
+
+The key challenge addressed was the methodological issue where the null and 
+alternative models are conditioned on a different number of initial 
+observations. By implementing both naive and adjusted versions of the tests, 
+this analysis confirms that the adjusted procedures are essential for reliable 
+inference.
+
+Core Competencies Showcased:
+
+ * Statistical Theory: Deep understanding of the theoretical underpinnings of 
+ three core statistical tests.
+
+ * Methodological Rigor: Identifying and correcting for subtle issues in 
+ statistical procedures that can impact results.
+
+ * R Programming: Translating complex statistical formulas from a research 
+ paper into functional, reproducible R code within a package structure.
+
+ * Validation & Simulation: Using simulated data with a known ground truth to 
+ validate the correctness of the implementation.

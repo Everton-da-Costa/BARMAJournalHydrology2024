@@ -7,53 +7,22 @@
 #' in Brazil. The data covers a period marked by seasonal fluctuations and
 #' prolonged droughts.
 #'
-#' @format A time series object (`ts`) with 301 monthly observations from
-#' January 1999 to January 2024.
-#'
-#' @source
-#' The data was obtained from the Brazilian National Electric System Operator
-#' (Operador Nacional do Sistema Elétrico - ONS), available at
-#' \url{https://www.ons.org.br}.
-#'
-#' @name itaparica
-NULL
+#' @format A data frame with 2 variables:
+#' \describe{
+#'   \item{time}{Month and year of observation (yearmon format)}
+#'   \item{y}{Useful volume as a proportion (between 0 and 1)}
+#' }
+#' @source Brazilian National Electric System Operator (ONS)
+"itaparica_df"
 
-#' Monthly Useful Volume of the Sobradinho Reservoir
+#' Itaparica Reservoir Monthly Useful Volume Time Series
 #'
-#' @description
-#' A time series dataset containing the monthly useful volume, expressed as a
-#' proportion (ranging from 0 to 1), of the Sobradinho hydroelectric power
-#' plant reservoir. The reservoir is part of the São Francisco River Basin (SFRB)
-#' in Brazil. The data covers a period marked by seasonal fluctuations and
-#' prolonged droughts.
+#' Monthly useful volume data from the Itaparica reservoir as a time series object,
+#' starting from January 1999.
 #'
 #' @format A time series object (`ts`) with 301 monthly observations from
 #' January 1999 to January 2024.
 #'
-#' @source
-#' The data was obtained from the Brazilian National Electric System Operator
-#' (Operador Nacional do Sistema Elétrico - ONS), available at
-#' \url{https://www.ons.org.br}.
-#'
-#' @name sobradinho
-NULL
+#' @source Brazilian National Electric System Operator (ONS)
+"itaparica_ts"
 
-#' Monthly Useful Volume of the Três Marias Reservoir
-#'
-#' @description
-#' A time series dataset containing the monthly useful volume, expressed as a
-#' proportion (ranging from 0 to 1), of the Três Marias hydroelectric power
-#' plant reservoir. The reservoir is part of the São Francisco River Basin (SFRB)
-#' in Brazil. The data covers a period marked by seasonal fluctuations and
-#' prolonged droughts.
-#'
-#' @format A time series object (`ts`) with 301 monthly observations from
-#' January 1999 to January 2024.
-#'
-#' @source
-#' The data was obtained from the Brazilian National Electric System Operator
-#' (Operador Nacional do Sistema Elétrico - ONS), available at
-#' \url{https://www.ons.org.br}.
-#'
-#' @name tres_marias
-NULL

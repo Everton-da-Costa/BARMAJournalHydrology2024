@@ -1,12 +1,11 @@
 # BARMAJournalHydrology2024
 
 [![DOI](https://img.shields.io/badge/DOI-10.1016/j.jhydrol.2024.131489-blue.svg)](https://doi.org/10.1016/j.jhydrol.2024.131489)
-
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This repository contains the R package and associated data for the scientific article:
 
-**"Test inferences and link function selection in dynamic beta modeling of seasonal hydro-environmental time series with temporary abnormal regimes"**  
-by Costa, E., Cribari-Neto, F., and Scher, V. T.  
+**"Test inferences and link function selection in dynamic beta modeling of seasonal hydro-environmental time series with temporary abnormal regimes"** by Costa, E., Cribari-Neto, F., and Scher, V. T.  
 Published in the *Journal of Hydrology*, Volume 638, 2024, 131489.
 
 [**View Article on ScienceDirect**](https://doi.org/10.1016/j.jhydrol.2024.131489)
@@ -19,7 +18,7 @@ Published in the *Journal of Hydrology*, Volume 638, 2024, 131489.
 - [✨ Key Features](#-key-features)
 - [📂 Repository Structure](#-repository-structure)
 - [🛠️ Installation](#️-installation)
-- [🚀 How to Replicate the Analysis](#-how-to-replicate-the-analysis)
+- [🚀 Getting Started & Examples (Vignettes)](#-getting-started--examples-vignettes)
 - [🎓 Citation](#-citation)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
@@ -29,16 +28,14 @@ Published in the *Journal of Hydrology*, Volume 638, 2024, 131489.
 
 ## 🎯 Project Motivation
 
-Climate change has increased the frequency of extreme weather events like prolonged droughts. This poses a significant challenge for managing water resources, particularly for hydroelectric power plants. This project addresses the need for accurate modeling and forecasting of reservoir water levels, which are time series data naturally bounded between 0 and 1 .
+Climate change has increased the frequency of extreme weather events like prolonged droughts. This poses a significant challenge for managing water resources, particularly for hydroelectric power plants. This project addresses the need for accurate modeling and forecasting of reservoir water levels, which are time series data naturally bounded between 0 and 1.
 
-We developed and validated a dynamic beta model (BARMA) to capture the unique characteristics of these time series: seasonality and abnormally dry periods. The analysis focuses on the useful volume of three major Brazilian reservoirs: Itaparica, Sobradinho, and Três Marias.
+We developed and validated a dynamic beta model ($\beta$ARMA) to capture the unique characteristics of these time series: seasonality and abnormally dry periods. The analysis focuses on the useful volume of the Itaparica reservoir in Brazil.
 
 This work provides robust statistical tools for hydrologists and data scientists to:
 
 1.  Perform accurate hypothesis tests for model validation.
-
 2.  Select the best model configuration (i.e., the link function).
-
 3.  Generate reliable in-sample predictions and out-of-sample forecasts.
 
 ---
@@ -47,37 +44,31 @@ This work provides robust statistical tools for hydrologists and data scientists
 
 This package provides a full toolchain for dynamic beta modeling. The key technical components include:
 
-*   **Dynamic Beta (BARMA) Model:** The core model is implemented in `R/barma.R`, providing the main function for fitting Beta Autoregressive Moving Average models to doubly-bounded time series.
-
-*   **Classical Hypothesis Tests:** A key contribution of the paper, implemented in `R/barma_classical_tests.R`. This script provides functions for performing Wald, Score, and Likelihood-Ratio tests, which are essential for model validation and inference.
-
-*   **Core Estimation Engine:** The mathematical foundation of the model is implemented in a series of functions, including:
-    *   `R/loglik_terms_ar.R` & `R/loglik_terms_ma.R`: For computing the log-likelihood terms.
-    *   `R/score_vector_arma.R`: For computing the score vector (gradient).
-    *   `R/inf_matrix_arma.R`: For computing the information matrix, crucial for standard errors and statistical tests.
-
-*   **Tools for Link Function Selection:** Provides code to analyze and compare the performance of different link functions (e.g., logit, probit, cloglog) for the model.
-
-*   **Full Reproducibility:** The `analysis/` directory contains scripts to replicate all key findings from the paper.
+* **Dynamic Beta ($\beta$ARMA) Model:** The core model is implemented in `R/barma.R`, providing the main function for fitting Beta Autoregressive Moving Average models.
+* **Classical Hypothesis Tests:** A key contribution of the paper, implemented in `R/barma_classical_tests.R`, providing functions for Wald, Score, and Likelihood-Ratio tests.
+* **Core Estimation Engine:** The mathematical foundation is implemented in a series of functions for computing the log-likelihood (`loglik_terms_ar.R`, `loglik_terms_ma.R`), score vector (`score_vector_arma.R`), and information matrix (`inf_matrix_arma.R`).
+* **Vignettes as Case Studies:** Two detailed vignettes serve as practical guides and portfolio pieces:
+    * An **end-to-end application** forecasting reservoir levels.
+    * A **technical deep-dive** into the implementation of statistical hypothesis tests.
 
 ---
 
 ## 📂 Repository Structure
 
-The repository is structured as a standard R package for clarity and reproducibility. This shows the main components; see the "Key Features" section above for details on the most important files.
+The repository is structured as a standard R package for clarity and reproducibility.
 
 ```plaintext
 .
-├── R/                  # Source code for all R functions in the package.
-├── data/               # Raw data files (.csv) for the reservoirs.
-├── analysis/           # R scripts to replicate the paper's analysis.
-├── man/                # R package documentation files.
-├── inst/               # Additional files (e.g., CITATION, .bib).
-├── output/             # Generated outputs (e.g., PDFs from R Markdown).
+├── R/                  # Source code for all R functions.
+├── data/               # Processed data included in the package (.rda).
+├── data-raw/           # Raw data and scripts used to process it.
+├── vignettes/          # Detailed tutorials and case studies (.Rmd).
+├── man/                # R package documentation files for functions.
+├── inst/               # Additional files (e.g., CITATION, REFERENCES.bib).
+├── output/             # (Optional) Generated outputs from vignettes.
 │
 ├── DESCRIPTION         # Package metadata and dependencies.
 ├── NAMESPACE           # Manages the package's namespace.
-├── BARMAJournalHydrology2024.Rproj # RStudio project file.
 ├── LICENSE             # MIT License file.
 └── README.md           # This file.
 ```
@@ -94,8 +85,13 @@ if (!require("remotes")) {
   install.packages("remotes")
 }
 ```
+
+Then, install the package from GitHub:
+
 ```R
-remotes::install_github("everton-da-costa/BARMAJournalHydrology2024", dependencies = TRUE)
+remotes::install_github("everton-da-costa/BARMAJournalHydrology2024", 
+                        dependencies = TRUE,
+                        build_vignettes = TRUE)
 ```
 
 Last Tested Environment
@@ -107,50 +103,36 @@ The scripts were last successfully tested on:
 
 ---
 
-## 🚀 How to Replicate the Analysis
+## 🚀 Getting Started & Examples (Vignettes)
 
-After installing the package, you can replicate the analyses presented in the paper.
+The best way to understand and replicate the analysis is through the package vignettes, which provide detailed, narrated code examples.
 
-1. Clone the Repository
-
-First, clone this repository to get access to the analysis scripts.
+1. List Available Vignettes
+After installation, you can see all available vignettes with the following command:
 
 ```R
-git clone https://github.com/everton-da-costa/BARMAJournalHydrology2024.git
-cd BARMAJournalHydrology2024
+# Lists all tutorials for this package
+browseVignettes("BARMAJournalHydrology2024")
 ```
 
-2. Load the Package
-Start a new R session within the project directory and load the package:
+2. Key Examples
+
+There are two main vignettes that showcase the capabilities of this package:
+
+ * `application`: (Portfolio Case Study) An end-to-end data science project demonstrating how to forecast the Itaparica reservoir water levels. It covers exploratory data analysis, feature engineering, model fitting, and comparison against benchmarks.
+
+* `classical_tests`: (Technical Deep-Dive) A detailed walkthrough of the implementation and validation of the Wald, Score, and Likelihood Ratio tests, replicating the simulation study from the original paper.
+
+3. Open a Specific Vignette
+
+You can open a specific vignette directly from your R console to view the full analysis and code.
 
 ```R
-library(BARMAJournalHydrology2024)
-```
+# Open the main application case study
+vignette("application", package = "BARMAJournalHydrology2024")
 
-3. Run the Analysis Scripts
-The analysis scripts are located in the analysis/ directory. You can run them directly in your R console.
-
-For example, to run the analysis for the Sobradinho reservoir:
-
-```R
-# This script applies the model to the Sobradinho data
-source("analysis/application_sobradinho.R")
-```
-Similarly, you can run the analysis for the other reservoirs:
-
-```R
-# source("analysis/application_itaparica.R")
-# source("analysis/application_tres_marias.R")
-```
-
-4. Generate the PDF Report
-
-
-The paper includes an example of classical tests. You can generate the PDF report for this example by running the rendering script:
-
-```R
-# This will execute the .Rmd file and save the PDF in the output/ directory
-source("analysis/render_classical_tests_example.R")
+# Open the technical deep-dive on hypothesis tests
+vignette("classical_tests", package = "BARMAJournalHydrology2024")
 ```
 
 ---

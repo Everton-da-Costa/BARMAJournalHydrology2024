@@ -43,29 +43,31 @@
 #'
 #' # --- Example 1: Simulate a BAR(1) process ---
 #' # y_t depends on y_{t-1}
-#' bar1_series <- simu_barma(n = 100, varphi = 0.5, phi = 50, link = "logit")
+#' bar1_series <- simu_barma(n = 250, alpha = 0.0, varphi = 0.5, phi = 20,
+#' link = "logit")
 #' plot(bar1_series, main = "Simulated BAR(1) Process", ylab = "Value")
 #'
 #' # --- Example 2: Simulate a BMA(1) process ---
 #' # y_t depends on the previous error term
-#' bma1_series <- simu_barma(n = 100, theta = -0.4, alpha = 0.2, phi = 80)
+#' bma1_series <- simu_barma(n = 250, alpha = 0.0, theta = -0.2, phi = 20)
 #' plot(bma1_series, main = "Simulated BMA(1) Process", ylab = "Value")
 #'
 #' # --- Example 3: Simulate a BARMA(2,1) process with a cloglog link ---
 #' barma21_series <- simu_barma(
 #'   n = 200,
+#'   alpha = 0.0,
 #'   varphi = c(0.4, 0.2), # AR(2) components
 #'   theta = -0.3,         # MA(1) component
-#'   alpha = 0.0,
-#'   phi = 30,
+#'   phi = 20,
 #'   link = "cloglog"
 #' )
 #' plot(barma21_series, main = "Simulated BARMA(2,1) Process", ylab = "Value")
 #'
 #' @export
 simu_barma <- function(n,
+                       alpha = 0.0,
                        varphi = NA, theta = NA,
-                       alpha = 0.0, phi = 20,
+                       phi = 20,
                        freq = 12, link = "logit") {
 
 

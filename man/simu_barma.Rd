@@ -6,9 +6,9 @@
 \usage{
 simu_barma(
   n,
+  alpha = 0,
   varphi = NA,
   theta = NA,
-  alpha = 0,
   phi = 20,
   freq = 12,
   link = "logit"
@@ -17,14 +17,14 @@ simu_barma(
 \arguments{
 \item{n}{The desired length of the final time series (after burn-in).}
 
+\item{alpha}{The intercept term (\eqn{\alpha}) in the linear predictor.
+Default is `0.0`.}
+
 \item{varphi}{A numeric vector of autoregressive (AR) parameters (\eqn{\varphi}).
 Default is `NA` for models without an AR component.}
 
 \item{theta}{A numeric vector of moving average (MA) parameters (\eqn{\theta}).
 Default is `NA` for models without an MA component.}
-
-\item{alpha}{The intercept term (\eqn{\alpha}) in the linear predictor.
-Default is `0.0`.}
 
 \item{phi}{The precision parameter (\eqn{\phi > 0}) of the Beta distribution.
 Higher values result in less variance. Default is `20`.}
@@ -59,21 +59,22 @@ set.seed(42)
 
 # --- Example 1: Simulate a BAR(1) process ---
 # y_t depends on y_{t-1}
-bar1_series <- simu_barma(n = 100, varphi = 0.5, phi = 50, link = "logit")
+bar1_series <- simu_barma(n = 250, alpha = 0.0, varphi = 0.5, phi = 20,
+link = "logit")
 plot(bar1_series, main = "Simulated BAR(1) Process", ylab = "Value")
 
 # --- Example 2: Simulate a BMA(1) process ---
 # y_t depends on the previous error term
-bma1_series <- simu_barma(n = 100, theta = -0.4, alpha = 0.2, phi = 80)
+bma1_series <- simu_barma(n = 250, alpha = 0.0, theta = -0.2, phi = 20)
 plot(bma1_series, main = "Simulated BMA(1) Process", ylab = "Value")
 
 # --- Example 3: Simulate a BARMA(2,1) process with a cloglog link ---
 barma21_series <- simu_barma(
   n = 200,
+  alpha = 0.0,
   varphi = c(0.4, 0.2), # AR(2) components
   theta = -0.3,         # MA(1) component
-  alpha = 0.0,
-  phi = 30,
+  phi = 20,
   link = "cloglog"
 )
 plot(barma21_series, main = "Simulated BARMA(2,1) Process", ylab = "Value")

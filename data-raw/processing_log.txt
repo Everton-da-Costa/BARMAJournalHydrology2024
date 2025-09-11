@@ -1,0 +1,14 @@
+Data processing completed:
+ - Loaded raw data from itaparica.csv
+ - Created time sequence from Jan 1999
+ - Handled values > 1
+ - Created data.frame and time series objects
+ - Added metadata
+ - Saved processed data
+Data processing completed:
+ - Loaded raw data from itaparica.csv
+ - Created time sequence from Jan 1999
+ - Handled values > 1
+ - Created data.frame and time series objects
+ - Added metadata
+ - Saved processed data
