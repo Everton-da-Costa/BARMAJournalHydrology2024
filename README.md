@@ -47,7 +47,7 @@ This package provides a full toolchain for dynamic beta modeling. The key techni
 * **Dynamic Beta ($\beta$ARMA) Model:** The core model is implemented in `R/barma.R`, providing the main function for fitting Beta Autoregressive Moving Average models.
 * **Classical Hypothesis Tests:** A key contribution of the paper, implemented in `R/barma_classical_tests.R`, providing functions for Wald, Score, and Likelihood-Ratio tests.
 * **Core Estimation Engine:** The mathematical foundation is implemented in a series of functions for computing the log-likelihood (`loglik_terms_ar.R`, `loglik_terms_ma.R`), score vector (`score_vector_arma.R`), and information matrix (`inf_matrix_arma.R`).
-* **Vignettes as Case Studies:** Two detailed vignettes serve as practical guides and portfolio pieces:
+* **Vignettes as Case Studies:** Two detailed vignettes serve as practical guides and complete applications of the methodology:
     * An **end-to-end application** forecasting reservoir levels.
     * A **technical deep-dive** into the implementation of statistical hypothesis tests.
 
@@ -65,7 +65,7 @@ The repository is structured as a standard R package for clarity and reproducibi
 ├── vignettes/          # Detailed tutorials and case studies (.Rmd).
 ├── man/                # R package documentation files for functions.
 ├── inst/               # Additional files (e.g., CITATION, REFERENCES.bib).
-├── output/             # (Optional) Generated outputs from vignettes.
+├── reports/            # Pre-rendered HTML reports for archival and reproducibility.
 │
 ├── DESCRIPTION         # Package metadata and dependencies.
 ├── NAMESPACE           # Manages the package's namespace.
@@ -119,9 +119,9 @@ browseVignettes("BARMAJournalHydrology2024")
 
 There are two main vignettes that showcase the capabilities of this package:
 
- * `application`: (Portfolio Case Study) An end-to-end data science project demonstrating how to forecast the Itaparica reservoir water levels. It covers exploratory data analysis, feature engineering, model fitting, and comparison against benchmarks.
+ * `reservoir_itaparica`: (Portfolio Case Study) An end-to-end data science project demonstrating how to forecast the Itaparica reservoir water levels. It covers exploratory data analysis, feature engineering, model fitting, and comparison against benchmarks.
 
-* `classical_tests`: (Technical Deep-Dive) A detailed walkthrough of the implementation and validation of the Wald, Score, and Likelihood Ratio tests, replicating the simulation study from the original paper.
+* `simulated_ts_classical_tests`: (Technical Deep-Dive) A detailed walkthrough of the implementation and validation of the Wald, Score, and Likelihood Ratio tests, replicating the simulation study from the original paper.
 
 3. Open a Specific Vignette
 
@@ -129,10 +129,10 @@ You can open a specific vignette directly from your R console to view the full a
 
 ```R
 # Open the main application case study
-vignette("application", package = "BARMAJournalHydrology2024")
+vignette("reservoir_itaparica", package = "BARMAJournalHydrology2024")
 
 # Open the technical deep-dive on hypothesis tests
-vignette("classical_tests", package = "BARMAJournalHydrology2024")
+vignette("simulated_ts_classical_tests", package = "BARMAJournalHydrology2024")
 ```
 
 ---
