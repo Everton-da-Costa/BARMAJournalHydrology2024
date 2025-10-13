@@ -66,7 +66,6 @@ The repository is structured as a standard R package for clarity and reproducibi
 ├── man/                # R package documentation files for functions.
 ├── inst/               # Additional files (e.g., CITATION, REFERENCES.bib).
 ├── reports/            # Pre-rendered HTML reports for archival and reproducibility.
-│
 ├── DESCRIPTION         # Package metadata and dependencies.
 ├── NAMESPACE           # Manages the package's namespace.
 ├── LICENSE             # MIT License file.
