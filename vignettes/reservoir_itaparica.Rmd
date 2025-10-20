@@ -33,7 +33,7 @@ knitr::opts_chunk$set(
 
 **The Challenge**: Brazil's hydroelectric-dependent energy grid faced critical instability during a severe drought (2012-2020). Existing forecasting models were not only inaccurate but also produced operationally impossible predictions (e.g., reservoir levels over 100%), risking emergency shutdowns and economic disruption.
 
-**The Solution**: A regime-aware Beta ARMA ($\beta\text{ARMA}$) model was applied to forecast reservoir levels. This statistical framework is ideal for bounded data (proportions from 0-100%).
+**The Solution**: A regime-aware Beta ARMA $(\beta\text{ARMA})$ model was applied to forecast reservoir levels. This statistical framework is ideal for bounded data (proportions from 0-100%).
 
 **Strategic Feature Engineering**: A key contribution was engineering features to detect the "drought regime." This allowed the model to automatically adapt its understanding of seasonality—a primary weakness in the benchmark models.
 
@@ -45,7 +45,7 @@ knitr::opts_chunk$set(
 
 * **Time Series Analysis**: Forecasting, autocorrelation analysis (ACF/PACF), and modeling complex seasonality.
 
-* **Machine Learning**: Application of advanced statistical models ($\beta\text{ARMA}$) and comparison against industry benchmarks (SARIMA, ETS).
+* **Machine Learning**: Application of advanced statistical models $(\beta\text{ARMA})$ and comparison against industry benchmarks (SARIMA, ETS).
 
 * **Feature Engineering**: Creating regime-specific indicators (dummy_dry) and interaction terms to build a model that adapts to structural breaks in the data.
 
@@ -69,9 +69,9 @@ The core technical challenges were:
 
 * **Seasonality & Regime Changes**: The reservoir's water levels are typically driven by strong seasonal patterns. However, the primary hypothesis is that traditional models failed due to two factors: the data's bounded nature and a suspected structural break caused by the 2012-2020 drought. The following exploratory data analysis will investigate these hypotheses.
 
-### The Solution: A Regime-Aware $\beta\text{ARMA}$ Model
+### The Solution: A Regime-Aware $(\beta\text{ARMA})$ Model
 
-This project applies a Beta Autoregressive Moving Average ($\beta\text{ARMA}$) model, a framework specifically designed for bounded time series data. The model was tailored to address the operational challenges by:
+This project applies a Beta Autoregressive Moving Average $(\beta\text{ARMA})$ model, a framework specifically designed for bounded time series data. The model was tailored to address the operational challenges by:
 
  * Constraining Forecasts: Naturally keeping all predictions within the realistic 0-100% range.
  
@@ -366,7 +366,7 @@ present was captured by Sine/cosine terms
 
 This dataset provides an ideal foundation for developing and validating advanced forecasting models that can handle both normal operations and crisis conditions.
 
-##  Building and Validating the Solution: $\beta$ARMA
+##  Building and Validating the Solution: $\beta\text{ARMA}$
 
 Now that we understand the data's structure, we can proceed with modeling. Our
 goal is to accurately forecast the reservoir's useful volume. We will fit our

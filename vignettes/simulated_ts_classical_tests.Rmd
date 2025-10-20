@@ -53,11 +53,11 @@ In modern data science, it's easy to fit complex models using off-the-shelf
 libraries. However, ensuring the statistical foundations of a model are sound 
 is critical for building trust and avoiding incorrect conclusions. This 
 vignette demonstrates a deeper level of model validation: implementing and 
-comparing classical hypothesis tests (Wald, LR, Score) for $\beta$ARMA model. 
+comparing classical hypothesis tests (Wald, LR, Score) for $\beta\text{ARMA}$ model. 
 The focus is on handling a subtle methodological challenge that can lead to 
 misleading results, showcasing a commitment to rigorous and reliable modeling.
 
-In $\beta$ARMA models, the conditional log-likelihood sum starts from $t=a+1$,
+In $\beta\text{ARMA}$ models, the conditional log-likelihood sum starts from $t=a+1$,
 where $a = \max(p,q)$ with $p$ and $q$ being the AR and MA orders, respectively.
 A crucial issue arises if $a$ for the null model ($a_N$) is less than $a$ for 
 the non-null/unrestricted model ($a_{NN}$). This report will illustrate such a 
@@ -225,9 +225,9 @@ knitr::kable(
 ## Classical Hypothesis Tests: LR, Rao Score, and Wald
 This section details the application of the Wald, Likelihood Ratio (LR), and 
 Rao Score tests. All three tests are employed to evaluate a common hypothesis
-regarding the parameters of the $\beta$ARMA model. Specifically, we test the 
+regarding the parameters of the $\beta\text{ARMA}$ model. Specifically, we test the 
 joint significance of the first four moving average (MA) parameters by comparing 
-an unrestricted $\beta$ARMA(1,4) model against a restricted $\beta$ARMA(1,0)
+an unrestricted $\beta\text{ARMA}(1,4)$ model against a restricted $\beta\text{ARMA}(1,0)$
 model.
 
 The null hypothesis:
@@ -247,7 +247,7 @@ challenge that arises when the number of initial observations used for
 conditioning differs between the null model ($a_N = \max(1,0) = 1$) and the
 unrestricted model ($a_{NN} = \max(1,4) = 4$). We will demonstrate both standard 
 and adjusted versions of these tests designed for such $a_N < a_{NN}$ 
-  scenarios to ensure robust inference.
+  scenarios to ensure reliable inference.
 
 ### Likelihood Ratio Test
 The `barma3ClassicalTests` 
@@ -403,11 +403,11 @@ The Wald test is another method for testing hypotheses about the model
 parameters. It primarily uses information from the unrestricted model, 
 specifically the parameter estimates and their variance-covariance matrix, 
 to assess the specified null hypothesis 
-($H_0: \theta_1 = \theta_2 = \theta_3 = \theta_4 = 0$).
+$(H_0: \theta_1 = \theta_2 = \theta_3 = \theta_4 = 0)$.
 
 \begin{itemize}
 \item W$_1$: This is the conventional Wald statistic, which employs the
-variance-covariance matrix obtained from the unrestricted $\beta$ARMA(1,4) model.
+variance-covariance matrix obtained from the unrestricted $\beta\text{ARMA}(1,4)$ model.
 \item W$_2$: This version, also discussed by 
 [Costa, E., Cribari-Neto, F., & Scher, V. T. (2024)](https://doi.org/10.1016/j.jhydrol.2024.131489) uses an alternative way to estimate the information matrix involved in the test construction.
 \end{itemize}
