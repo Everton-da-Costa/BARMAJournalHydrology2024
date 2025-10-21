@@ -3,53 +3,24 @@
 # -----------------------------------------------------------------------------
 name: R Package Check
 
-# -----------------------------------------------------------------------------
 # TRIGGERS
-# -----------------------------------------------------------------------------
-# The 'on' keyword defines the events that trigger this workflow to run.
 on:
   # Run the workflow when code is pushed to the 'main' branch.
   push:
     branches: [ "main" ]
-  # Run the workflow when a pull request targeting the 'main' branch is
-  # opened or updated.
   pull_request:
     branches: [ "main" ]
 
-# -----------------------------------------------------------------------------
-# PERMISSIONS
-# -----------------------------------------------------------------------------
-# Sets the default permissions for the GITHUB_TOKEN for all jobs in this
-# workflow. 'contents: read' is a good security practice, as it restricts
-# the workflow from writing to your repository.
 permissions:
   contents: read
 
-# -----------------------------------------------------------------------------
-# JOBS
-# -----------------------------------------------------------------------------
-# A workflow run is made up of one or more 'jobs'. Each job runs in a
-# fresh environment.
 jobs:
-  # This is the unique ID for our job. You can name it anything you like.
   R-CMD-check:
-    # 'runs-on' specifies the type of runner (virtual machine) the job will
-    # run on. We use a variable from the 'matrix' below to run this job on
-    # multiple OSes.
     runs-on: ${{ matrix.os }}
 
-    # A 'strategy' creates a build matrix for your jobs. This lets you run
-    # tests against different combinations of configurations.
     strategy:
-      # 'fail-fast: false' ensures that even if one job in the matrix fails,
-      # the other jobs will continue to run. This is useful for seeing test
-      # results from all operating systems.
       fail-fast: false
 
-      # The 'matrix' defines the different configurations we want to test.
-      # The job will run once for each possible combination of these options.
-      # (e.g., ubuntu-latest with R release, windows-latest with R release,
-      # etc.)
       matrix:
         # os: [ubuntu-latest, windows-latest, macos-latest]
         os: [ubuntu-latest]
@@ -58,14 +29,10 @@ jobs:
     # 'steps' are a sequence of tasks that will be executed as part of the job.
     steps:
       # Step 1: Check out the repository code
-      # This action checks out a copy of your repository onto the runner,
-      # allowing the workflow to access your package source code.
       - name: Check out repository
         uses: actions/checkout@v4
 
       # Step 2: Set up the R environment
-      # This action from the 'r-lib' organization installs and configures the
-      # specified version of R from our build matrix.
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
         with:
@@ -77,29 +44,22 @@ jobs:
           sudo apt-get install -y liblbfgs-dev
 
       # Step 3: Install R package dependencies
-      # This action is the most reliable way to install dependencies. It reads
-      # your package's DESCRIPTION file and installs everything listed there.
       - name: Install dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           # 'packages' allows us to list any extra R packages to install that
-          # are needed for the workflow itself. We need 'rcmdcheck' to run
-          # the checks, and 'knitr' and 'Rdpack' to build the documentation
-          # and vignettes.
+          # are needed for the workflow itself.
+          cache-version: 2
           packages: |
             any::rcmdcheck
             any::knitr
             any::Rdpack
 
       # Step 4: Install LaTeX for PDF documentation
-      # This action installs TinyTeX, a lightweight LaTeX distribution.
-      # It's needed for 'R CMD build' to successfully create the PDF manual.
       - name: Install LaTeX
         uses: r-lib/actions/setup-tinytex@v2
 
       # Step 5: Run the R CMD Check
-      # This is the final and most important step. It runs the standard R
-      # package check process using the 'rcmdcheck' package.
       - name: Check package
         run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
         shell: Rscript {0}
