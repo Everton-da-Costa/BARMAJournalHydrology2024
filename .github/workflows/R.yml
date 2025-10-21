@@ -55,6 +55,19 @@ jobs:
             any::knitr
             any::Rdpack
 
+      - name: Verify lbfgs installation
+        run: |
+          if (!requireNamespace("lbfgs", quietly = TRUE)) {
+            stop("DEBUG FAIL: lbfgs package was NOT found after the installation step.")
+          } else {
+            message("DEBUG SUCCESS: lbfgs package was found.")
+          }
+        shell: Rscript {0}
+
+      # ... (This is your existing 'Install LaTeX' step)
+      - name: Install LaTeX
+        uses: r-lib/actions/setup-tinytex@v2
+
       # Step 4: Install LaTeX for PDF documentation
       - name: Install LaTeX
         uses: r-lib/actions/setup-tinytex@v2
