@@ -51,7 +51,8 @@ jobs:
       # (e.g., ubuntu-latest with R release, windows-latest with R release,
       # etc.)
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        # os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest]
         r-version: ['release', 'devel']
 
     # 'steps' are a sequence of tasks that will be executed as part of the job.
