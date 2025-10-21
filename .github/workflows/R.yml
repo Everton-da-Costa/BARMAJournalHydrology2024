@@ -20,19 +20,22 @@ jobs:
         r-version: ['release', 'devel']
 
     steps:
+      # 1. Checks out a copy of your repository
       - uses: actions/checkout@v4
 
+      # 2. Sets up the specified R version
       - name: Set up R ${{ matrix.r-version }}
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: ${{ matrix.r-version }}
 
+      # 3. Installs all R package dependencies AND rcmdcheck itself
       - name: Install dependencies
-        run: |
-          install.packages(c("remotes", "rcmdcheck"))
-          remotes::install_deps(dependencies = TRUE)
-        shell: Rscript {0}
+        uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          packages: any::rcmdcheck
 
+      # 4. Runs the check command now that rcmdcheck is installed
       - name: Check
         run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
         shell: Rscript {0}
