@@ -71,6 +71,11 @@ jobs:
         with:
           r-version: ${{ matrix.r-version }}
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y liblbfgs-dev
+
       # Step 3: Install R package dependencies
       # This action is the most reliable way to install dependencies. It reads
       # your package's DESCRIPTION file and installs everything listed there.
