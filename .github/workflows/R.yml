@@ -50,9 +50,6 @@ jobs:
         with:
           extra-packages: |
             any::rcmdcheck
-            any::knitr
-            any::Rdpack
-            any::lbfgs
           cache-version: 6
 
       # Step 5: Install LaTeX for PDF documentation
