@@ -55,13 +55,8 @@ jobs:
             any::knitr
             any::Rdpack
 
-      - name: Verify lbfgs installation
-        run: |
-          if (!requireNamespace("lbfgs", quietly = TRUE)) {
-            stop("DEBUG FAIL: lbfgs package was NOT found after the installation step.")
-          } else {
-            message("DEBUG SUCCESS: lbfgs package was found.")
-          }
+      - name: Install lbfgs package
+        run: install.packages('lbfgs')
         shell: Rscript {0}
 
       # ... (This is your existing 'Install LaTeX' step)
