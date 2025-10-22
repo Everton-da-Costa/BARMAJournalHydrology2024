@@ -37,14 +37,14 @@ RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 RdMacros: Rdpack
 Imports: 
-    lbfgs,
-    Rdpack
-Suggests:
     dplyr,
     ggplot2,
     gridExtra,
+    lbfgs,
+    Rdpack,
     scales,
-    zoo,
+    zoo
+Suggests:
     forecast,
     here,
     knitr,
