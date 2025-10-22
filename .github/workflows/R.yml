@@ -47,9 +47,9 @@ jobs:
       - name: Install dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          # 'packages' allows us to list any extra R packages to install that
-          # are needed for the workflow itself.
-          cache-version: 2
+          # This line tells the action to install the dependencies
+          dependencies: "imports, depends, linkingto, suggests"
+          cache-version: 3
           packages: |
             any::rcmdcheck
             any::knitr
