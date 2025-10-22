@@ -48,7 +48,8 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           # This line tells the action to install the dependencies
-          dependencies: "imports, depends, linkingto, suggests"
+          # dependencies: "imports, depends, linkingto, suggests"
+          dependencies: "c(TRUE, 'Suggests')"
           cache-version: 3
           packages: |
             any::rcmdcheck
