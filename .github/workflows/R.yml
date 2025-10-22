@@ -49,20 +49,12 @@ jobs:
         with:
           # This line tells the action to install the dependencies
           # dependencies: "imports, depends, linkingto, suggests"
-          dependencies: "c(TRUE, 'Suggests')"
-          cache-version: 3
+          dependencies: "all"
+          cache-version: 4
           packages: |
             any::rcmdcheck
             any::knitr
             any::Rdpack
-
-      - name: Install lbfgs package
-        run: install.packages('lbfgs')
-        shell: Rscript {0}
-
-      # ... (This is your existing 'Install LaTeX' step)
-      - name: Install LaTeX
-        uses: r-lib/actions/setup-tinytex@v2
 
       # Step 4: Install LaTeX for PDF documentation
       - name: Install LaTeX
