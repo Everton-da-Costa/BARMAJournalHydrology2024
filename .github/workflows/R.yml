@@ -43,14 +43,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y liblbfgs-dev
 
-      # Step 3: Install R package dependencies
+      # Step 4: Install ALL R package dependencies
       - name: Install dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          # This line tells the action to install the dependencies
-          # dependencies: "imports, depends, linkingto, suggests"
-          dependencies: "all"
-          cache-version: 4
+          # This is the corrected R expression for all dependency types
+          dependencies: "c('Depends', 'Imports', 'LinkingTo', 'Suggests')"
+          # Bump the cache to force a fresh install
+          cache-version: 5
           packages: |
             any::rcmdcheck
             any::knitr
