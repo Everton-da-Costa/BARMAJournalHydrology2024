@@ -48,7 +48,7 @@ jobs:
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
           # This is the corrected R expression for all dependency types
-          dependencies: c('Depends', 'Imports', 'LinkingTo', 'Suggests')
+          dependencies: "c('Depends', 'Imports', 'LinkingTo', 'Suggests')"
           # Bump the cache to force a fresh install
           cache-version: 5
           packages: |
