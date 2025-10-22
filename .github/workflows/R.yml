@@ -38,6 +38,7 @@ jobs:
         with:
           r-version: ${{ matrix.r-version }}
 
+      # Step 3: Install system dependencies
       - name: Install system dependencies
         run: |
           sudo apt-get update
@@ -47,20 +48,18 @@ jobs:
       - name: Install dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          # This is the corrected R expression for all dependency types
-          dependencies: "c('Depends', 'Imports', 'LinkingTo', 'Suggests')"
-          # Bump the cache to force a fresh install
-          cache-version: 5
-          packages: |
+          extra-packages: |
             any::rcmdcheck
             any::knitr
             any::Rdpack
+            any::lbfgs
+          cache-version: 6
 
-      # Step 4: Install LaTeX for PDF documentation
+      # Step 5: Install LaTeX for PDF documentation
       - name: Install LaTeX
         uses: r-lib/actions/setup-tinytex@v2
 
-      # Step 5: Run the R CMD Check
+      # Step 6: Run the R CMD Check
       - name: Check package
         run: rcmdcheck::rcmdcheck(args = "--no-manual", error_on = "error")
         shell: Rscript {0}
