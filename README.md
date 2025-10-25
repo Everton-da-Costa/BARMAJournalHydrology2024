@@ -5,9 +5,9 @@ Everton da Costa
 # BARMAJournalHydrology2024
 
 [![DOI](https://img.shields.io/badge/DOI-10.1016/j.jhydrol.2024.131489-blue.svg)](https://doi.org/10.1016/j.jhydrol.2024.131489)
-
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![R-CMD-check](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R.yml/badge.svg)](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R.yml)
 
 This repository contains the R package and associated data for the
 scientific article:
@@ -104,6 +104,10 @@ reproducibility.
 ```
 
 ------------------------------------------------------------------------
+
+## Code of Conduct
+
+Please note that the BARMAJournalHydrology2024 project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
 
 ## 🛠️ Installation
 
