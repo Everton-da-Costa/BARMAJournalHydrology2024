@@ -7,7 +7,7 @@ Everton da Costa
 [![DOI](https://img.shields.io/badge/DOI-10.1016/j.jhydrol.2024.131489-blue.svg)](https://doi.org/10.1016/j.jhydrol.2024.131489)
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![R-CMD-check](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R.yml/badge.svg)](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R.yml)
+[![R-CMD-check](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R-CMD-check.yaml)
 
 This repository contains the R package and associated data for the
 scientific article:
