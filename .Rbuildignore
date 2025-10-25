@@ -6,3 +6,5 @@
 ^README\.html$
 ^BARMAJournalHydrology2024\.Rproj$
 ^data-raw$
+^\.github$
+^CODE_OF_CONDUCT\.md$
