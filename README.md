@@ -145,39 +145,28 @@ Last Tested Environment The scripts were last successfully tested on:
 The best way to understand and replicate the analysis is through the
 package vignettes, which provide detailed, narrated code examples.
 
-1.  List Available Vignettes After installation, you can see all
-    available vignettes with the following command:
+### 1. View Pre-Rendered Reports (Recommended)
 
-``` r
-# Lists all tutorials for this package
+This is the fastest way to see the full analysis. You can view the pre-rendered HTML reports directly in your browser without installing the package.
+
+* **Portfolio Case Study: [View `reservoir_itaparica` Report (HTML)](reports/reservoir_itaparica_2025-10-20.html)**
+
+    > An end-to-end data science project demonstrating how to forecast the Itaparica reservoir water levels. It covers exploratory data analysis, feature engineering, model fitting, and comparison against benchmarks.
+
+* **Technical Deep-Dive: [View `simulated_ts_classical_tests` Report (HTML)](reports/simulated_ts_classical_tests_2025-10-20.html)**
+
+    > A detailed walkthrough of the implementation and validation of the Wald, Score, and Likelihood Ratio tests, replicating the simulation study from the original paper.
+
+### 2. Run Locally (After Installation)
+
+After installation, you can also see all available vignettes and run them interactively from your R console:
+    
+```R
+# 1. Lists all tutorials for this package
 browseVignettes("BARMAJournalHydrology2024")
-```
 
-2.  Key Examples
-
-There are two main vignettes that showcase the capabilities of this
-package:
-
-- `reservoir_itaparica`: (Portfolio Case Study) An end-to-end data
-  science project demonstrating how to forecast the Itaparica reservoir
-  water levels. It covers exploratory data analysis, feature
-  engineering, model fitting, and comparison against benchmarks.
-
-- `simulated_ts_classical_tests`: (Technical Deep-Dive) A detailed
-  walkthrough of the implementation and validation of the Wald, Score,
-  and Likelihood Ratio tests, replicating the simulation study from the
-  original paper.
-
-3.  Open a Specific Vignette
-
-You can open a specific vignette directly from your R console to view
-the full analysis and code.
-
-``` r
-# Open the main application case study
+# 2. Open a specific vignette
 vignette("reservoir_itaparica", package = "BARMAJournalHydrology2024")
-
-# Open the technical deep-dive on hypothesis tests
 vignette("simulated_ts_classical_tests", package = "BARMAJournalHydrology2024")
 ```
 
