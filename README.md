@@ -149,11 +149,11 @@ package vignettes, which provide detailed, narrated code examples.
 
 This is the fastest way to see the full analysis. You can view the pre-rendered HTML reports directly in your browser without installing the package.
 
-* **Portfolio Case Study: [View `reservoir_itaparica` Report (HTML)](https://htmlpreview.github.io/?https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/blob/main/reports/reservoir_itaparica_2025-10-20.html)**
+* **Portfolio Case Study: [View `reservoir_itaparica` Report (HTML)](https://htmlpreview.github.io/?https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/blob/main/reports/reservoir_itaparica.html)**
 
     > An end-to-end data science project demonstrating how to forecast the Itaparica reservoir water levels. It covers exploratory data analysis, feature engineering, model fitting, and comparison against benchmarks.
 
-* **Technical Deep-Dive: [View `simulated_ts_classical_tests` Report (HTML)](https://htmlpreview.github.io/?https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/blob/main/reports/simulated_ts_classical_tests_2025-10-20.html)**
+* **Technical Deep-Dive: [View `simulated_ts_classical_tests` Report (HTML)](https://htmlpreview.github.io/?https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/blob/main/reports/simulated_ts_classical_tests.html)**
 
     > A detailed walkthrough of the implementation and validation of the Wald, Score, and Likelihood Ratio tests, replicating the simulation study from the original paper.
 

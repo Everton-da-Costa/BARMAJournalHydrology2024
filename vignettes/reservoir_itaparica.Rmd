@@ -1,11 +1,11 @@
 ---
-title: "Predicting Reservoir Water Levels - A Machine Learning Solution for Energy Infrastructure"
 author: "Everton da Costa"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     toc: true
     toc_depth: 3
+    toc_float: false
     number_sections: true
     fig_caption: true
 bibliography: ../inst/REFERENCES.bib
