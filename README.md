@@ -60,6 +60,19 @@ scientists to:
 
 ------------------------------------------------------------------------
 
+## 🏆 Publication & Journal Quality
+
+This research was published in the **Journal of Hydrology**, a top-tier **Q1** journal in the fields of Environmental Science and Water Science. The journal's high standing speaks to the rigor and impact of the underlying research, as reflected in its key metrics: (data from 2024, at the time of publication):
+
+* **Impact Factor:** 6.3
+* **CiteScore:** 11.1
+* **SJR:** 1.911
+* **H-Index:** 290
+
+[![SCImago Journal & Country Rank](https://www.scimagojr.com/journal_img.php?id=50089)](https://www.scimagojr.com/journalsearch.php?q=50089&tip=sid&exact=no)
+
+------------------------------------------------------------------------
+
 ## ✨ Key Features
 
 This package provides a full toolchain for dynamic beta modeling. The
@@ -80,6 +93,18 @@ key technical components include:
   - An **end-to-end application** forecasting reservoir levels.
   - A **technical deep-dive** into the implementation of statistical
     hypothesis tests.
+
+------------------------------------------------------------------------
+
+## Key Skills Demonstrated
+
+This project showcases a range of data science skills, from research to a reproducible tool:
+
+* **R Package Development:** Creating a documented, testable, and installable R package.
+* **Time Series Analysis & Forecasting:** Implementing and applying advanced Dynamic Beta Models ($\beta$ARMA).
+* **Statistical Modeling & Hypothesis Testing:** Implementing classical statistical tests (Wald, Score, LR) from scratch based on academic literature.
+* **Reproducible Research:** Authoring R Markdown vignettes to create comprehensive portfolio case studies.
+* **Data Visualization:** Using `ggplot2` for exploratory data analysis and presentation of results (as seen in the vignettes).
 
 ------------------------------------------------------------------------
 
