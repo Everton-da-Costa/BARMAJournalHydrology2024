@@ -1,10 +1,4 @@
-<<<<<<< HEAD
 BARMAJournalHydrology2024: A Package for Beta Autoregressive Moving Average Models
-=======
-betaARMA: A Package for Beta Autoregressive Moving Average Models
->>>>>>> origin/main
-================
-Everton da Costa
 
 # BARMAJournalHydrology2024
 
@@ -12,10 +6,7 @@ Everton da Costa
 [![License:
 MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![R-CMD-check](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R-CMD-check.yaml)
-<<<<<<< HEAD
 [![GitHub Downloads](https://img.shields.io/github/downloads/Everton-da-Costa/BARMAJournalHydrology2024/total.svg?logo=github&color=blue)](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/releases)
-=======
->>>>>>> origin/main
 
 This repository contains the R package and associated data for the
 scientific article:
