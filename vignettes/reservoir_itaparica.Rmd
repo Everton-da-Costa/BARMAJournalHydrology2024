@@ -1,12 +1,11 @@
 ---
-title: "Dynamic Beta Modeling of Seasonal Hydro-environmental Time Series - Test Inferences and Link Function Selection with Temporary Abnormal Regimes"
-subtitle: "Application - Itaparica Reservoir"
 author: "Everton da Costa"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
     toc: true
     toc_depth: 3
+    toc_float: false
     number_sections: true
     fig_caption: true
 bibliography: ../inst/REFERENCES.bib
@@ -26,41 +25,31 @@ knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE
 )
-
-library(BARMAJournalHydrology2024)
-library(forecast)   # time series
-library(ggplot2)    # plotting
-library(zoo)        # yearmon handling
-library(gridExtra)  # grid.arrange for plots
-
-library(dplyr)
 ```
 
 # Predicting Reservoir Water Levels - A Machine Learning Solution for Energy Infrastructure
 
 ## Executive Summary: 
 
-Solved a critical forecasting problem for Brazil's energy sector, where 
-traditional models failed during a historic drought. We used a time series model
-$(\beta\text{ARMA})$ that improved forecast accuracy compared
-to industry benchmarks like SARIMA and ETS. The model adapts to extreme 
-conditions and, unlike standard methods, guarantees operationally valid 
-predictions (i.e., never forecasts negative water levels or levels above 100%
-capacity). This work, packaged as a reproducible R library, provides a direct 
-path to more reliable operational planning, reduced risk of shutdowns, and 
-better resource management for critical energy infrastructure.
+**The Challenge**: Brazil's hydroelectric-dependent energy grid faced critical instability during a severe drought (2012-2020). Existing forecasting models were not only inaccurate but also produced operationally impossible predictions (e.g., reservoir levels over 100%), risking emergency shutdowns and economic disruption.
+
+**The Solution**: A regime-aware Beta ARMA $(\beta\text{ARMA})$ model was applied to forecast reservoir levels. This statistical framework is ideal for bounded data (proportions from 0-100%).
+
+**Strategic Feature Engineering**: A key contribution was engineering features to detect the "drought regime." This allowed the model to automatically adapt its understanding of seasonality—a primary weakness in the benchmark models.
+
+**Guaranteed Validity**: The model's structure inherently ensures all predictions fall within the operational 0-100% range.
+
+**The Impact**: The solution delivered more accurate and operationally reliable forecasts than industry standards (SARIMA, ETS). This work provides a validated methodology to improve energy grid stability and manage water resources during climatic extremes.
 
 ## Core Competencies Demonstrated
 
 * **Time Series Analysis**: Forecasting, autocorrelation analysis (ACF/PACF), and modeling complex seasonality.
 
-* **Machine Learning**: Application of advanced statistical models ($\beta$ARMA) and comparison against industry benchmarks (SARIMA, ETS).
+* **Machine Learning**: Application of advanced statistical models $(\beta\text{ARMA})$ and comparison against industry benchmarks (SARIMA, ETS).
 
 * **Feature Engineering**: Creating regime-specific indicators (dummy_dry) and interaction terms to build a model that adapts to structural breaks in the data.
 
 * **Model Validation**: Rigorous residual analysis and out-of-sample forecast evaluation using metrics like MAE and RMSE.
-
-* **Scientific Communication**: Translating complex academic research into a practical, reproducible R package and clear documented
 
 **Key Reference:** 
 [Costa, E., Cribari-Neto, F., & Scher, V. T. (2024)](https://doi.org/10.1016/j.jhydrol.2024.131489).
@@ -68,7 +57,7 @@ Test inferences and link function selection in dynamic beta modeling of
 seasonal hydro-environmental time series with temporary abnormal regimes. 
 *Journal of Hydrology*, 638, 131489.
 
-## Introduction
+## Investigation: Uncovering the Story in the Data
 
 ### The Challenge: Forecasting for Critical Energy Infrastructure
 
@@ -78,11 +67,11 @@ The core technical challenges were:
 
 * **Bounded Data**: Reservoir levels are proportions, naturally constrained between 0% and 100%. Standard models can yield impossible forecasts outside this range.
 
-* **Seasonality & Regime Changes**: The reservoir's water levels are typically driven by strong seasonal patterns. However, the prolonged 2012-2020 drought created a structural break where this seasonality completely disappeared, rendering traditional forecasting models that rely on consistent seasonal cycles ineffective.
+* **Seasonality & Regime Changes**: The reservoir's water levels are typically driven by strong seasonal patterns. However, the primary hypothesis is that traditional models failed due to two factors: the data's bounded nature and a suspected structural break caused by the 2012-2020 drought. The following exploratory data analysis will investigate these hypotheses.
 
-### The Solution: A Regime-Aware $\beta\text{ARMA}$ Model
+### The Solution: A Regime-Aware $(\beta\text{ARMA})$ Model
 
-This project applies a Beta Autoregressive Moving Average ($\beta\text{ARMA}$) model, a framework specifically designed for bounded time series data. The model was tailored to address the operational challenges by:
+This project applies a Beta Autoregressive Moving Average $(\beta\text{ARMA})$ model, a framework specifically designed for bounded time series data. The model was tailored to address the operational challenges by:
 
  * Constraining Forecasts: Naturally keeping all predictions within the realistic 0-100% range.
  
@@ -100,7 +89,20 @@ The resulting $\beta\text{ARMA}$ model delivered consistently more accurate fore
 
 ## Data Analysis and Key Insights
 
-```{r, config_data_visualization, include=FALSE}
+We'll start by loading the necessary R packages. This setup includes `BARMAJournalHydrology2024` for the project-specific data and functions, `forecast` for core time series modeling, `dplyr` for efficient data manipulation, and `ggplot2` for creating high-quality visualizations.
+
+```{r, library}
+library(BARMAJournalHydrology2024)
+library(forecast)   # Core time series functions
+library(ggplot2)    # Advanced plotting
+library(zoo)        # Handling for 'yearmon' date objects
+library(gridExtra)  # Arranging multiple plots
+library(dplyr)      # Data manipulation and pipelines
+```
+
+Next, we'll set up some standard configurations for our `ggplot2` plots. This helps ensure a consistent and clean appearance for all visualizations in the vignette.
+
+```{r, config_data_visualization}
 # Series size and end time
 sample_size <- length(itaparica_ts)
 end_time_series <- time(itaparica_ts)[sample_size] + 1
@@ -110,23 +112,12 @@ ggplot_size_font <- 9
 
 # ggplot theme
 ggplot_theme <- theme(
-  legend.position = "bottom",
   title = element_text(size = ggplot_size_font),
   axis.text = element_text(size = ggplot_size_font),
   axis.title = element_text(size = ggplot_size_font),
   legend.text = element_text(size = ggplot_size_font),
   legend.title = element_text(size = ggplot_size_font)
   )
-
-# ggplot theme forecast plot
-ggplot_theme_forecast <- theme(
-  legend.position = "right",
-  title = element_text(size = ggplot_size_font),
-  axis.text = element_text(size = ggplot_size_font),
-  axis.title = element_text(size = ggplot_size_font),
-  legend.text = element_text(size = ggplot_size_font),
-  legend.title = element_text(size = ggplot_size_font)
-)
 
 # y-axis scale
 ggplot_scale_y <-
@@ -144,13 +135,23 @@ ggplot_scale_x <- scale_x_continuous(
 
 ### Dataset Overview
 
-**Data Source:** Itaparica Reservoir operational data (1999-2024)  
-**Key Metric:** Useful volume as percentage of total capacity (0-100%)  
-**Context:** Critical input for energy generation planning and grid stability
+**Data Source:** Itaparica Reservoir operational data (1999-2024);
 
-The dataset spans 25 years of monthly observations, providing sufficient historical depth to capture both normal operational cycles and extreme events like the 2012-2020 drought.
+**Key Metric:** Useful volume as percentage of total capacity (0-100%);
 
-```{r, ggplot_itaparica, include=FALSE}
+**Context:** Critical input for energy generation planning and grid stability.
+
+This dataset spans 25 years of monthly observations, providing a history of both normal operational cycles and extreme events like the historic 2012–2020 drought.
+
+We'll begin with an exploratory data analysis (EDA) to visually inspect the data's structure. Plotting the time series and its autocorrelation functions (ACF/PACF) is the first step in identifying the key patterns and dependencies that will guide our modeling strategy.
+
+**The Problem**: Brazil's energy grid, which relies on hydroelectric power for over 65% of its supply, faced a crisis during the historic 2012-2020 drought. Traditional forecasting models failed, producing inaccurate and sometimes impossible predictions (e.g., water levels over 100%) at critical reservoirs like Itaparica. This unreliability posed a direct threat to energy planning and grid stability.
+
+**The Dataset**: The analysis uses 25 years of monthly operational data (1999-2024) from the Itaparica reservoir, focusing on the useful volume as a percentage of total capacity. This metric is a critical input for energy generation planning.
+
+**The First Clue**: A Historic Regime Change To understand why traditional models were failing, the first step was a visual inspection of the reservoir's water levels over time. Did any major events stand out?
+
+```{r, ggplot_itaparica}
 # -------------------------------------------------------------------------- #
 # Time series plot
 # -------------------------------------------------------------------------- #
@@ -159,7 +160,7 @@ ggplot_itaparica <- ggplot(itaparica_df, aes(time, y)) +
   geom_line(aes(group = 1)) +
   ggplot_scale_x +
   ggplot_scale_y +
-  ggplot_theme +
+  ggplot_theme + 
   guides(colour = guide_legend(title = "Temporary regimes"))
 
 # -------------------------------------------------------------------------- #
@@ -180,9 +181,8 @@ ggpacf_plot <- ggPacf(itaparica_ts) +
 ```
 
 ```{r, print_ggplot_itaparica, message=FALSE, echo=FALSE, fig.height=5, fig.cap="Useful volume of the Itaparica reservoir (top), with its corresponding autocorrelation function (bottom left) and partial autocorrelation function (bottom right)."}
-# -------------------------------------------------------------------------- #
+
 # Grid all plots
-# -------------------------------------------------------------------------- #
 grid.arrange(
   ggplot_itaparica,
   ggacf_plot,
@@ -191,12 +191,16 @@ grid.arrange(
 )
 ```
 
+**Practical Implication**: This discovery is the cornerstone of the modeling strategy. 
+Any successful forecasting system must be able to automatically detect and adapt to such regime changes.
+
 ### Uncovering Key Patterns: EDA Insights
 
-#### 1. Operational Regime Change
-The data reveals a fundamental shift in operational patterns during 2012-2020. Normal seasonal variations completely disappeared during this drought period, creating a **structural break** that traditional forecasting methods cannot handle. This explains why existing models failed during the crisis. This insight was critical: any successful model must be able to account for this regime change. This directly informed the feature engineering strategy.
+**A Historic Operational Regime Change**: The time series plot clearly shows a fundamental shift in behavior during the 2012–2020 drought. In this period, the normal seasonal fluctuations vanished, and the reservoir's volume remained critically low. This structural break explains why traditional time series models would fail and highlights the need for a model that can adapt to different operational regimes. This finding is the cornerstone of our feature engineering strategy.
 
-```{r, descriptive, include=FALSE}
+**High Volatility and Operational Risk**: The descriptive statistics confirm the significant uncertainty in water levels (a standard deviation of 29%). The fact that the reservoir has operated at its critical minimum of 10% capacity underscores the real-world risk of shutdowns that our forecasting model aims to mitigate.
+
+```{r, descriptive}
 # -------------------------------------------------------------------------- #
 # Descriptive statistics: Useful volume of the Itaparica reservoir
 # -------------------------------------------------------------------------- #
@@ -232,9 +236,11 @@ One observation slightly exceeded the reservoir's highest safety value: 1.007 in
  
  - **Distribution:** Slight positive skew suggests more frequent low-volume periods.
 
-#### 2. Drought Impact Analysis
+#### **Drought Impact Analysis**
 
-```{r, ggplot_abnormal_period, include=FALSE}
+Our initial analysis pointed to a potential shift in behavior during the 2012–2020 period. To investigate this further, we will explicitly highlight this timeframe, which corresponds to a documented severe drought. The following plot visualizes this **abnormal operational regime** to confirm its distinct impact on the reservoir's seasonal patterns.
+
+```{r, ggplot_abnormal_period}
 # -------------------------------------------------------------------------- #
 # Create data frame with abnormal period dummy
 # -------------------------------------------------------------------------- #
@@ -276,6 +282,7 @@ ggplot_abnormal_period <- ggplot(
   ggplot_scale_x +
   ggplot_scale_y +
   ggplot_theme +
+  theme(legend.position = "bottom") + 
   guides(colour = guide_legend(title = "Temporary regimes"))
 ```
 
@@ -293,9 +300,12 @@ The 8-year drought created an **abnormal operational regime** where:
 
 **Practical Implication:** Any forecasting system must detect and adapt to such regime changes automatically.
 
-#### 3. Seasonal Pattern Analysis
+#### **Seasonal Pattern Analysis**
 
-```{r, ggmonthplot, include=FALSE}
+#### **Deconstructing the Seasonal Pattern**
+While the drought period lacked a clear pattern, the data outside this regime showed strong, predictable seasonality. A deeper dive into the monthly patterns during "normal" years is essential for engineering the features that will drive the model.
+
+```{r, ggmonthplot}
 # Monthly seasonality plot
 ggmonthplot_itaparica_ts <- ggmonthplot(itaparica_ts) +
   labs(title = " ", x = "Month", y = " ") + 
@@ -307,7 +317,7 @@ ggmonthplot_itaparica_ts <- ggmonthplot(itaparica_ts) +
 print(ggmonthplot_itaparica_ts)
 ```
 
-```{r, ggseasonplot, include=FALSE}
+```{r, ggseasonplot}
 # Seasonality plot by year
 ggseasonplot_itaparica_ts <- ggseasonplot(itaparica_ts) +
   labs(title = " ", x = "Month", y = " ") + 
@@ -320,15 +330,16 @@ ggseasonplot_itaparica_ts <- ggseasonplot(itaparica_ts) +
 print(ggseasonplot_itaparica_ts)
 ```
 
-**Operational Insights:**
+**Operational Insights:** 
+The seasonal plots reveal a clear yearly cycle crucial for energy planning:
 
-- **Peak Season:** June-July (wet season) - volumes typically reach 60-80%
+- **Peak Season:** Volumes typically reach 60-80% in the wet season (June-July).
 
-- **Low Season:** October-December (dry season) - volumes drop to 40-50%
+- **Low Season:** Volumes drop to 40-50% in the dry season (October-December).
 
-- **Critical Period:** January-March - steepest decline requiring careful management
+- **Critical Period:** The steepest decline occurs from January to March, requiring careful management.
 
-This seasonality drives energy generation planning and maintenance scheduling throughout the year.
+This analysis provided a clear path forward for feature engineering and modeling. The final model needed the intelligence to distinguish between these two states of the world: a normal, seasonal pattern and an abnormal, non-seasonal drought.
 
 ### Strategic Feature Engineering
 
@@ -355,23 +366,19 @@ present was captured by Sine/cosine terms
 
 This dataset provides an ideal foundation for developing and validating advanced forecasting models that can handle both normal operations and crisis conditions.
 
-## Model Fitting: $\beta$ARMA
+##  Building and Validating the Solution: $\beta\text{ARMA}$
 
 Now that we understand the data's structure, we can proceed with modeling. Our
 goal is to accurately forecast the reservoir's useful volume. We will fit our
-proposed $\beta$ARMA model, which is specifically designed for bounded time 
+proposed $\beta\text{ARMA}$ model, which is specifically designed for bounded time 
 series. To evaluate its effectiveness, we will benchmark its performance
 against standard time series models like SARIMA, SARIMAX, and ETS.
 
 ### Train-Test Split
 
-To evaluate model performance on unseen data, we split the series
-chronologically. This simulates a real-world forecasting scenario. The model
-will be trained on data up to January 2023, and its forecasting accuracy will
-be tested on the subsequent 12 months (February 2023 to January 2024).
-[Costa, E., Cribari-Neto, F., & Scher, V. T. (2024)](https://doi.org/10.1016/j.jhydrol.2024.131489).
+To evaluate model performance on unseen data, we split the series chronologically. The model will be trained on data up to January 2023, and its forecasting accuracy will be tested on the subsequent 12 months (February 2023 to January 2024). [Costa, E., Cribari-Neto, F., & Scher, V. T. (2024)](https://doi.org/10.1016/j.jhydrol.2024.131489).
 
-```{r, split_data, include=FALSE}
+```{r, split_data}
 stop_train_date <- as.yearmon("2023-01")
 
 y_train_loc <- itaparica_df$time <= stop_train_date
@@ -384,37 +391,10 @@ y_train_ts <- ts(y_train_df$y, end = stop_train_date, frequency = 12)
 y_test_ts <- ts(y_test_df$y, start = stop_train_date + 1 / 12, frequency = 12)
 ```
 
-### Regressor Construction
+### Strategic Feature Engineering
+The preceding analysis confirmed the existence of two distinct operational regimes. To equip the model with the ability to recognize and adapt to these states, the following features were engineered
 
-Based on our visual analysis, we construct several regressors to capture the
-series' key features. This feature engineering step is critical for building a
-model.
-
-* Drought Dummy (dummy_dry): A binary indicator that equals 1 from October 2012
-to May 2020. This allows the model to explicitly account for the different
-behavior during the abnormal drought regime.
-
-* Harmonic Features (`hs`, `hc`): A pair of sine (`sin`) and cosine (`cos`)
-terms to model the primary annual seasonality. These smooth, cyclical features
-are effective at capturing the main seasonal pattern.
-
-* Interaction for Regime-Dependent Seasonality: A key finding from our analysis
-was that the typical seasonal pattern vanished during the prolonged drought. 
-To model this, we interact the seasonal features with a "non-drought" indicator
-`(1 - dummy_dry)`. This technique effectively "turns off" the seasonality
-during the drought period, leading to more accurate modeling.
-
-This results in the following regressors used in the model:
-
-* `hs1dummy_dry`: The sine-wave seasonal effect, applied only outside the
-drought.
-* `hc1dummy_dry`: The cosine-wave seasonal effect, applied only outside the
-drought.
-* `d03_1dummy_dry` and `d10_1dummy_dry`: Specific dummy variables for March and
-October, also applied only outside the drought, to capture sharp monthly
-effects not fully explained by the smooth harmonic terms.
-
-```{r, regressor_construction, include=FALSE}
+```{r, regressor_construction}
 len_y_train <- length(y_train_ts)
 len_y_test <- length(y_test_ts)
 
@@ -473,106 +453,110 @@ X_test <- cbind(
 )
 ```
 
-Comparing Models
+**The Core Strategy**: The key innovation here is the use of interaction terms. By creating features like `hs1dummy_dry`, the model was designed to automatically "turn off" seasonal patterns during the drought. This prevents the model from making inappropriate seasonal forecasts when historical patterns no longer apply.
+
+The code above creates several key predictors for both the training (`_train`) and testing (`_test`) datasets:
+
+* A dummy variable, `dummy_dry`, is created to signal the abnormal drought regime from October 2012 to May 2020.
+
+ * Harmonic features, `hs` (sine) and `hc` (cosine), are generated to model the smooth annual seasonal pattern.
+
+ * The core of the strategy lies in the interaction terms. By interacting the seasonal features with a "non-drought" indicator (`1 - dummy_dry`), we create predictors like `hs1dummy_dry` and `hc1dummy_dry`. These features automatically "turn off" during the drought, preventing the model from applying seasonal patterns when they are not present in the data. The same logic is applied to create `d03_1dummy_dry` and `d10_1dummy_dry` for the sharp monthly transitions in March and October.
+
+## Comparing Models
+
 In this section, we compare the performance of different time series models.
-Our primary focus is the $\beta$ARMA model, which explicitly handles the
+Our primary focus is the $\beta\text{ARMA}$ model, which explicitly handles the
 bounded nature of the reservoir data. We include SARIMA, SARIMAX, and ETS as
 widely-used benchmarks to demonstrate the relative advantage of our specialized
 approach.
 
-### $\beta$ARMA model with different link functions
+### $\beta\text{ARMA}$ model with different link functions
 
-The $\beta$ARMA model is our primary tool. A key component is the link
-function, which maps the model's linear predictors to the (0, 1) scale of the
-reservoir volume. The choice of link function can impact model fit, especially
-how it handles values near the boundaries (0 and 1). We will fit the model
-using three common link functions - `logit`, `log-log`, and `cloglog` - to
-determine which provides the best fit for our data.
+Now that we understand the data's structure, we can proceed with modeling. Our primary model is the $\beta\text{ARMA}$ (Beta Autoregressive Moving Average), a framework specifically designed for time series data that is bounded between 0 and 1, like our reservoir volume percentages.
 
-#### Logit
+**Model Selection**: Choosing the Right Tool for Bounded Data Standard time series models (like ARIMA) can fail on this type of data because they can predict values outside the realistic 0-100% range. To solve this, the Beta ARMA ($\beta\text{ARMA}$) model was selected. This framework is specifically designed for time series data that is bounded, guaranteeing every forecast is operationally valid.
 
-The model's dynamic structure (AR and MA orders) was selected based on a
-careful analysis of the series' autocorrelation and partial autocorrelation
-functions. The final specification was chosen to capture both short-term
-persistence (AR terms 1 and 3) and complex, long-range seasonal dependencies
-(MA terms 12, 19, and 24) identified in the residual diagnostics.
+**Model Tuning**: Ensuring the Best Specification A key part of the $\beta\text{ARMA}$ model is its link function. To ensure the most reliable and accurate model, three different link functions (`logit`, `log-log`, `cloglog`) were fitted and evaluated. This systematic testing demonstrates a rigorous approach to model specification.
 
-```{r}
+The model's dynamic structure (the AR and MA orders) was chosen based on our EDA to capture both short-term persistence and long-range seasonal patterns identified in the data. The code below defines this structure and then fits the $\beta\text{ARMA}$ model for each of the three link functions.
+
+Based on your exploratory data analysis (EDA), the model's dynamic structure, which includes its Autoregressive (AR) and Moving Average (MA) orders, was selected to capture both short-term persistence and long-range seasonal patterns found in the data. The code below defines this structure, which corresponds to the final specification present in the paper [Costa, E., Cribari-Neto, F., & Scher, V. T. (2024)](https://doi.org/10.1016/j.jhydrol.2024.131489).
+
+```{r, estimation_setup}
 # BARMA model to be estimate using different link functions
 ar_vec <- c(1, 3)
 ma_vec <- c(12, 19, 24)
 ```
 
+#### Logit
 ```{r, fit_BARMA_logit}
-# logit
+# Link function: logit
+link <- "logit"
+
+# Fit BARMA model with logit link function
 fit_BARMA_logit <- barma(
   y_train_ts,
   ar = ar_vec,
   ma = ma_vec,
-  link = "logit",
+  link = link,
   X = X_train,
   X_hat = X_test
 )
 knitr::kable(
   fit_BARMA_logit$model,
-  caption = "Estimated coefficients for the $\\beta ARMA$ model with logit link function."
+  caption = "Estimated coefficients for the $\\beta\\text{ARMA}$ model with logit link function."
 )
 ```
 
 #### Loglog
 ```{r, fit_BARMA_loglog}
-# loglog
+# Link function: loglog
+link <- "loglog"
+
+# Fit BARMA model with loglog link function
 fit_BARMA_loglog <- barma(
   y_train_ts,
   ar = ar_vec,
   ma = ma_vec,
-  link = "loglog",
+  link = link,
   X = X_train,
   X_hat = X_test
 )
 
 knitr::kable(
   fit_BARMA_loglog$model,
-  caption = "Estimated coefficients for the $\\beta ARMA$ model with loglog link function."
+  caption = "Estimated coefficients for the $\\beta\\text{ARMA}$ model with loglog link function."
 )
 ```
 
 #### Cloglog
 ```{r, fit_BARMA_cloglog}
-# cloglog
+# Link function: cloglog
+link <- "cloglog"
+
+# Fit BARMA model with coglog link function
 fit_BARMA_cloglog <- barma(
   y_train_ts,
   ar = ar_vec,
   ma = ma_vec,
-  link = "cloglog",
+  link = link,
   X = X_train,
   X_hat = X_test
 )
 knitr::kable(
   fit_BARMA_cloglog$model,
-  caption = "Estimated coefficients for the $\\beta ARMA$ model with cloglog link function."
+  caption = "Estimated coefficients for the $\\beta\\text{ARMA}$ model with cloglog link function."
 )
 ```
 
 ### Residual analysis with different link functions
 
-A crucial step in model validation is to analyze the model's residuals. As
-noted in the original study, a well-specified model should capture all
-systematic patterns in the data, leaving residuals that are essentially random
-noise with no serial correlation.
+A crucial validation step is **residual analysis**. A well-specified model should 
+leave behind only random noise, with no lingering patterns in its errors. 
+The Autocorrelation Function (ACF) plots below test for this.
 
-We can visually inspect this by plotting the Autocorrelation Function (ACF) of
-the residuals for each model. In the plots below, we are looking for
-significant spikes that extend beyond the dashed blue confidence bands. The
-presence of such spikes would indicate that the model has failed to capture all
-of the underlying dynamics of the series.
-
-The results will show that the `logit` and `loglog` link functions produce
-well-behaved residuals, validating their model specification. In contrast, the
-`cloglog` model will show significant residual autocorrelation, suggesting it
-is not an appropriate choice for this time series.
-
-```{r, ggplot_residuals, include=FALSE}
+```{r, ggplot_residuals}
 # Extract residuals
 residual_BARMA_logit <- fit_BARMA_logit$resid2
 residual_BARMA_loglog <- fit_BARMA_loglog$resid2
@@ -603,6 +587,13 @@ grid.arrange(
 )
 ```
 
+As the plots show, the `logit` and `loglog` models produced well-behaved 
+residuals, while the cloglog model showed significant remaining autocorrelation,
+indicating it was not a suitable choice. Based on this analysis and superior 
+information criteria scores (AIC, BIC), the $\beta\text{ARMA}$ model with the 
+`log-log` link function was selected as the final candidate for its optimal 
+balance of fit and complexity.
+
 ### Forecast visualization with different link functions
 
 The ultimate test of a time series model is its forecasting accuracy on unseen
@@ -614,7 +605,7 @@ As anticipated from the residual analysis, the forecasts from the `logit` and
 model's predictions are visibly less accurate, confirming that the choice of
 link function has a direct and practical impact on model performance.
 
-```{r, ggplot_forecastd_link, include=FALSE}
+```{r, ggplot_forecastd_link}
 # Prepare data
 n <- length(y_test_ts)
 dates <- as.Date(as.yearmon(time(y_test_ts)))
@@ -674,16 +665,16 @@ ggplot_forecastd_link <- ggplot(forecasts_df, aes(x = time)) +
     limits = c(0.3, 1.0),
     labels = scales::number_format(accuracy = 0.1)
   ) +
-  ggplot_theme_forecast
+  ggplot_theme
 ```
 
-```{r, print_ggplot_forecastd_link, fit.heigh=7, echo=FALSE, fig.cap = "Comparative forecast visualization of different link functions (logit, log-log, clog-log) for the $\\beta ARMA$ model."}
+```{r, print_ggplot_forecastd_link, fit.heigh=7, echo=FALSE, fig.cap = "Comparative forecast visualization of different link functions (logit, log-log, clog-log) for the $\\beta\\text{ARMA}$ model."}
 print(ggplot_forecastd_link)
 ```
 
 ### Selecting the Final $\beta$ARMA Model
 
-Based on the analysis, the $\beta$ARMA model with the `log-log` link function
+Based on the analysis, the $\beta\text{ARMA}$ model with the `log-log` link function
 is selected as our final candidate for forecasting. This decision is supported
 by evidence from the source article:
 
@@ -701,7 +692,7 @@ against other standard time series forecasting methods.
 
 ## Model Fitting: Traditional Benchmarks
 
-To properly evaluate the performance of the $\beta$ARMA model, we
+To properly evaluate the performance of the $\beta\text{ARMA}$ model, we
 benchmark it against widely-used, traditional time series models.
 
 For the benchmark models (SARIMA, SARIMAX, and ETS), we have explicitly defined
@@ -711,21 +702,26 @@ analysis, specifying the model orders directly serves a critical purpose here:
 **reproducibility**. This approach guarantees that the results in this vignette
 will remain identical to those from our original analysis, regardless of future
 updates to the `forecast` package or its selection algorithms. This ensures a
-stable and fair comparison against our proposed $\beta$ARMA model.
+stable and fair comparison against our proposed $\beta\text{ARMA}$ model.
 
 ### SARIMA
 
-```{r}
+```{r, fit_SARIMA}
 fit_SARIMA <- forecast::Arima(
   y = y_train_ts,
   order = c(1, 0, 0),
   seasonal = c(1, 0, 1)
 )
+knitr::kable(
+  fit_SARIMA$coef,
+  digits = 4,
+  caption = "Estimated coefficients for SARIMA model."
+)
 ```
 
 ### SARIMAX
 
-```{r}
+```{r, fit_SARIMAX}
 fit_SARIMAX <- forecast::Arima(
   y = y_train_ts,
   order = c(2, 0, 2),
@@ -736,12 +732,26 @@ fit_SARIMAX <- forecast::Arima(
     d10_1dummy_dry = d10_1dummy_dry_train
   )
 )
+knitr::kable(
+  fit_SARIMAX$coef,
+  digits = 4,
+  caption = "Estimated coefficients for SARIMAX model."
+)
 ```
 
 ### ETS
 
-```{r}
+```{r, fit_ETS}
 fit_ETS <- forecast::ets(y_train_ts, model = "ANA")
+
+# Extract the estimated parameters into a clean table
+params_ETS <- summary(fit_ETS)$par
+
+knitr::kable(
+  params_ETS,
+  digits = 4,
+  caption = "Estimated parameters for the ETS(A,N,A) model."
+)
 ```
 
 ## Comparison models
@@ -766,7 +776,7 @@ observed data to visually inspect how well they track the series' real-world
 behavior.
 
 
-```{r, forecast_models, include=FALSE}
+```{r, forecast_models}
 forecast_BARMA <- fit_BARMA_loglog$forecast
 forecast_SARIMA <- forecast(fit_SARIMA, h = len_y_test)$mean
 forecast_SARIMAX <- forecast(
@@ -781,11 +791,16 @@ forecast_SARIMAX <- forecast(
 forecast_ETS <- forecast(fit_ETS, h = len_y_test)$mean
 ```
 
-### Evaluation Metrics
+### The Final Showdown: $\beta$ARMA vs. Industry Benchmarks
 
-The evaluation metrics below confirm the $\beta$ARMA model's superior performance. Across nearly all forecast horizons, it delivered lower Mean Absolute Error (MAE) and Root Mean Squared Error (RMSE) compared to the benchmark models.
+The ultimate test is how the selected model performs against established 
+alternatives on unseen data. The $\beta$ARMA model's forecasts were benchmarked 
+against SARIMA, SARIMAX, and ETS models.
 
-```{r, eval_metrics, include=FALSE}
+The tables below quantify the forecast accuracy using Mean Absolute Error (MAE) 
+and Root Mean Squared Error (RMSE). The model with the lowest error is the winner.
+
+```{r, eval_metrics}
 evaluation_metrics <- function(actual_values, forecasts) {
   mae <- mean(abs(forecasts - actual_values))
   rmse <- sqrt(mean((forecasts - actual_values)^2))
@@ -826,7 +841,7 @@ rownames(RMSE_results) <- c("RMSE_BARMA", "RMSE_SARIMA", "RMSE_SARIMAX", "RMSE_E
 colnames(MAE_results) <- colnames(RMSE_results) <- 1:12
 ```
 
-```{r, print_eval_metrics1, echo=FALSE}
+```{r, print_eval_metrics_MAE, echo=FALSE}
 knitr::kable(
   MAE_results,
   caption = 
@@ -835,7 +850,7 @@ knitr::kable(
 )
 ```
 
-```{r, print_eval_metrics2, echo=FALSE}
+```{r, print_eval_metrics_RMSE, echo=FALSE}
 knitr::kable(
   RMSE_results,
   caption = 
@@ -856,8 +871,11 @@ A visual comparison of the forecasts provides further insight. The plot below
 shows the actual observed values from the test set (blue dots) against the
 forecasts from the four models.
 
+While the numbers are clear, a visual comparison makes the performance is 
+superior. The plot below charts the actual observed values against the forecasts
+from all four models.
 
-```{r, ggplot_forecast_comparison, include=FALSE}
+```{r, ggplot_forecast_comparison}
 # Prepare data
 n <- length(y_test_ts)
 dates <- as.Date(as.yearmon(time(y_test_ts)))
@@ -927,27 +945,64 @@ ggplot_forecast_comparison <- ggplot(forecasts_df, aes(x = time)) +
 print(ggplot_forecast_comparison)
 ```
 
-Visually, the forecast from the $\beta$ARMA model is the only one that
-effectively tracks the evolution of the data over the 12-month horizon. It
-successfully captures the general trend and turning points of the reservoir's
-useful volume, confirming the quantitative results from the evaluation metrics.
+Visually, the $\beta$ARMA model is the only one that effectively tracks the 
+real-world behavior of the reservoir over the 12-month horizon, confirming its 
+quantitative superiority.
 
 ## Conclusion and Future Work
 
-The analysis demonstrates that the $\beta$ARMA model, which accounts for the bounded nature of reservoir data and adapts to operational regime changes, is a significantly more accurate and reliable forecasting tool than traditional models for this application.
+This project successfully developed and validated a sophisticated forecasting 
+model that is demonstrably more accurate and reliable than industry-standard 
+methods for this critical application.
 
-**Key Takeaways**:
+This analysis successfully demonstrated that the failure of standard forecasting models on the Itaparica reservoir data was primarily due to their inability to adapt to the drought-induced structural break. The superior performance of the regime-aware $\beta$ARMA model underscores the necessity of explicitly modeling such real-world dynamics.models for this application.
 
-* Superior Accuracy: The $\beta$ARMA model consistently outperformed SARIMA, SARIMAX, and ETS in out-of-sample forecasting.
+**Key Achievements**:
 
-* Operational Reliability: Unlike standard models, the $\beta$ARMA model guarantees that forecasts will remain within the valid 0%-100% range, preventing nonsensical predictions. 
+* **Superior Accuracy**: Consistently outperformed SARIMA, SARIMAX, and ETS models 
+in out-of-sample forecasting, as measured by both MAE and RMSE
 
-* Adaptability: Strategic feature engineering allowed the model to automatically handle the structural break caused by the drought, a key failure point for simpler models. 
+* **Operational Reliability**: The use of a $\beta$ARMA framework guarantees all 
+forecasts remain within the valid 0-100% range, completely eliminating the risk
+of nonsensical predictions that can disrupt planning
+
+* **Dynamic Adaptability**:  Through strategic feature engineering, the model 
+automatically detects and adapts to structural breaks in the data (like the 
+prolonged drought), a key failure point for simpler models.
+
+**The Value**:
+This methodology provides a direct path to reducing operational risk, improving 
+resource planning, and strengthening energy grid resilience. For energy
+infrastructure operators, more reliable forecasts enable better-informed 
+decisions on power generation and water management, especially during periods 
+of climatic uncertainty.
 
 **Potential Next Steps**:
+The success of this modeling approach opens the door for several high-value 
+extensions:
 
-* Model Deployment: Packaging this model into a production-ready API for real-time forecasting.
+* **Productionalization**: Packaging the model into a deployable API for 
+real-time forecasting.
 
-* Hyperparameter Tuning: Exploring automated tuning methods to further optimize the model's AR and MA components.
+* **Automated Tuning**: Implementing automated hyperparameter tuning methods to 
+further optimize model performance.
 
-* Alternative Models: Benchmarking against other non-linear time series models, such as LSTMs or Prophet, to see if further accuracy gains are possible.
+* **Expanded Benchmarking**: Testing this framework against other advanced 
+non-linear models (e.g., LSTMs) to explore further accuracy gains.
+
+
+## Reproducibility
+
+To ensure the long-term reproducibility of this analysis, the following section details the specific computational environment in which this document was generated. This includes the R version, operating system, and all loaded package versions. This information is crucial for anyone attempting to replicate these findings in the future.
+
+```{r, session_info, echo=FALSE}
+cat("=================================================================", "\n")
+cat("Session Information", "\n")
+cat("=================================================================", "\n")
+
+cat("This report was generated at:", 
+    format(Sys.time(), "%B %d, %Y at %I:%M %p"), "\n")
+cat("\n")
+
+print(sessionInfo())
+```

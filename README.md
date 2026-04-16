@@ -1,16 +1,27 @@
+BARMAJournalHydrology2024: A Package for Beta Autoregressive Moving Average Models
+================
+Everton da Costa
+
 # BARMAJournalHydrology2024
 
 [![DOI](https://img.shields.io/badge/DOI-10.1016/j.jhydrol.2024.131489-blue.svg)](https://doi.org/10.1016/j.jhydrol.2024.131489)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License:
+MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![R-CMD-check](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R-CMD-check.yaml)
+[![GitHub Downloads](https://img.shields.io/github/downloads/Everton-da-Costa/BARMAJournalHydrology2024/total.svg?logo=github&color=blue)](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/releases)
 
-This repository contains the R package and associated data for the scientific article:
+This repository contains the R package and associated data for the
+scientific article:
 
-**"Test inferences and link function selection in dynamic beta modeling of seasonal hydro-environmental time series with temporary abnormal regimes"** by Costa, E., Cribari-Neto, F., and Scher, V. T.  
+**“Test inferences and link function selection in dynamic beta modeling
+of seasonal hydro-environmental time series with temporary abnormal
+regimes”** by Costa, E., Cribari-Neto, F., and Scher, V. T.  
 Published in the *Journal of Hydrology*, Volume 638, 2024, 131489.
 
-[**View Article on ScienceDirect**](https://doi.org/10.1016/j.jhydrol.2024.131489)
+[**View Article on
+ScienceDirect**](https://doi.org/10.1016/j.jhydrol.2024.131489)
 
----
+------------------------------------------------------------------------
 
 ## 📚 Table of Contents
 
@@ -18,46 +29,92 @@ Published in the *Journal of Hydrology*, Volume 638, 2024, 131489.
 - [✨ Key Features](#-key-features)
 - [📂 Repository Structure](#-repository-structure)
 - [🛠️ Installation](#️-installation)
-- [🚀 Getting Started & Examples (Vignettes)](#-getting-started--examples-vignettes)
+- [🚀 Getting Started & Examples
+  (Vignettes)](#-getting-started--examples-vignettes)
 - [🎓 Citation](#-citation)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
 - [📬 Contact](#-contact)
 
----
+------------------------------------------------------------------------
 
 ## 🎯 Project Motivation
 
-Climate change has increased the frequency of extreme weather events like prolonged droughts. This poses a significant challenge for managing water resources, particularly for hydroelectric power plants. This project addresses the need for accurate modeling and forecasting of reservoir water levels, which are time series data naturally bounded between 0 and 1.
+Climate change has increased the frequency of extreme weather events
+like prolonged droughts. This poses a significant challenge for managing
+water resources, particularly for hydroelectric power plants. This
+project addresses the need for accurate modeling and forecasting of
+reservoir water levels, which are time series data naturally bounded
+between 0 and 1.
 
-We developed and validated a dynamic beta model ($\beta$ARMA) to capture the unique characteristics of these time series: seasonality and abnormally dry periods. The analysis focuses on the useful volume of the Itaparica reservoir in Brazil.
+We developed and validated a dynamic beta model ($\beta$ARMA) to capture
+the unique characteristics of these time series: seasonality and
+abnormally dry periods. The analysis focuses on the useful volume of the
+Itaparica reservoir in Brazil.
 
-This work provides robust statistical tools for hydrologists and data scientists to:
+This work provides statistical tools for hydrologists and data
+scientists to:
 
 1.  Perform accurate hypothesis tests for model validation.
 2.  Select the best model configuration (i.e., the link function).
 3.  Generate reliable in-sample predictions and out-of-sample forecasts.
 
----
+------------------------------------------------------------------------
+
+## 🏆 Publication & Journal Quality
+
+This research was published in the **Journal of Hydrology**, a top-tier **Q1** journal in the fields of Environmental Science and Water Science. The journal's high standing speaks to the rigor and impact of the underlying research, as reflected in its key metrics: (data from 2024, at the time of publication):
+
+* **Impact Factor:** 6.3
+* **CiteScore:** 11.1
+* **SJR:** 1.911
+* **H-Index:** 290
+
+[![SCImago Journal & Country Rank](https://www.scimagojr.com/journal_img.php?id=50089)](https://www.scimagojr.com/journalsearch.php?q=50089&tip=sid&exact=no)
+
+------------------------------------------------------------------------
 
 ## ✨ Key Features
 
-This package provides a full toolchain for dynamic beta modeling. The key technical components include:
+This package provides a full toolchain for dynamic beta modeling. The
+key technical components include:
 
-* **Dynamic Beta ($\beta$ARMA) Model:** The core model is implemented in `R/barma.R`, providing the main function for fitting Beta Autoregressive Moving Average models.
-* **Classical Hypothesis Tests:** A key contribution of the paper, implemented in `R/barma_classical_tests.R`, providing functions for Wald, Score, and Likelihood-Ratio tests.
-* **Core Estimation Engine:** The mathematical foundation is implemented in a series of functions for computing the log-likelihood (`loglik_terms_ar.R`, `loglik_terms_ma.R`), score vector (`score_vector_arma.R`), and information matrix (`inf_matrix_arma.R`).
-* **Vignettes as Case Studies:** Two detailed vignettes serve as practical guides and portfolio pieces:
-    * An **end-to-end application** forecasting reservoir levels.
-    * A **technical deep-dive** into the implementation of statistical hypothesis tests.
+- **Dynamic Beta ($\beta$ARMA) Model:** The core model is implemented in
+  `R/barma.R`, providing the main function for fitting Beta
+  Autoregressive Moving Average models.
+- **Classical Hypothesis Tests:** A key contribution of the paper,
+  implemented in `R/barma_classical_tests.R`, providing functions for
+  Wald, Score, and Likelihood-Ratio tests.
+- **Core Estimation Engine:** The mathematical foundation is implemented
+  in a series of functions for computing the log-likelihood
+  (`loglik_terms_ar.R`, `loglik_terms_ma.R`), score vector
+  (`score_vector_arma.R`), and information matrix (`inf_matrix_arma.R`).
+- **Vignettes as Case Studies:** Two detailed vignettes serve as
+  practical guides and complete applications of the methodology:
+  - An **end-to-end application** forecasting reservoir levels.
+  - A **technical deep-dive** into the implementation of statistical
+    hypothesis tests.
 
----
+------------------------------------------------------------------------
+
+## Key Skills Demonstrated
+
+This project showcases a range of data science skills, from research to a reproducible tool:
+
+* **R Package Development:** Creating a documented, testable, and installable R package.
+* **Time Series Analysis & Forecasting:** Implementing and applying advanced Dynamic Beta Models ($\beta$ARMA).
+* **Statistical Modeling & Hypothesis Testing:** Implementing classical statistical tests (Wald, Score, LR) from scratch based on academic literature.
+* **Reproducible Research:** Authoring R Markdown vignettes to create comprehensive portfolio case studies.
+* **Data Visualization:** Using `ggplot2` for exploratory data analysis and presentation of results (as seen in the vignettes).
+
+------------------------------------------------------------------------
 
 ## 📂 Repository Structure
 
-The repository is structured as a standard R package for clarity and reproducibility.
+The repository is structured as a standard R package for clarity and
+reproducibility.
 
-```plaintext
+``` plaintext
 .
 ├── R/                  # Source code for all R functions.
 ├── data/               # Processed data included in the package (.rda).
@@ -65,22 +122,29 @@ The repository is structured as a standard R package for clarity and reproducibi
 ├── vignettes/          # Detailed tutorials and case studies (.Rmd).
 ├── man/                # R package documentation files for functions.
 ├── inst/               # Additional files (e.g., CITATION, REFERENCES.bib).
-├── output/             # (Optional) Generated outputs from vignettes.
-│
+├── reports/            # Pre-rendered HTML reports for archival and reproducibility.
 ├── DESCRIPTION         # Package metadata and dependencies.
 ├── NAMESPACE           # Manages the package's namespace.
 ├── LICENSE             # MIT License file.
 └── README.md           # This file.
 ```
 
----
+------------------------------------------------------------------------
+
+## Code of Conduct
+
+Please note that the BARMAJournalHydrology2024 project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/1/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
 
 ## 🛠️ Installation
-This research compendium can be installed as an R package directly from GitHub. This is the recommended method as it handles all dependencies automatically.
 
-First, ensure you have the remotes package. If not, install it from CRAN:
+This research compendium can be installed as an R package directly from
+GitHub. This is the recommended method as it handles all dependencies
+automatically.
 
-```R
+First, ensure you have the remotes package. If not, install it from
+CRAN:
+
+``` r
 if (!require("remotes")) {
   install.packages("remotes")
 }
@@ -88,60 +152,58 @@ if (!require("remotes")) {
 
 Then, install the package from GitHub:
 
-```R
+``` r
 remotes::install_github("everton-da-costa/BARMAJournalHydrology2024", 
                         dependencies = TRUE,
                         build_vignettes = TRUE)
 ```
 
-Last Tested Environment
-The scripts were last successfully tested on:
+Last Tested Environment The scripts were last successfully tested on:
 
-*   **R version:** 4.4.2 ("Pile of Leaves")
+- **R version:** 4.4.2 (“Pile of Leaves”)
 
-*   **Platform:** x86_64-pc-linux-gnu (64-bit)
+- **Platform:** x86_64-pc-linux-gnu (64-bit)
 
----
+------------------------------------------------------------------------
 
 ## 🚀 Getting Started & Examples (Vignettes)
 
-The best way to understand and replicate the analysis is through the package vignettes, which provide detailed, narrated code examples.
+The best way to understand and replicate the analysis is through the
+package vignettes, which provide detailed, narrated code examples.
 
-1. List Available Vignettes
-After installation, you can see all available vignettes with the following command:
+### 1. View Pre-Rendered Reports (Recommended)
 
+This is the fastest way to see the full analysis. You can view the pre-rendered HTML reports directly in your browser without installing the package.
+
+* **Portfolio Case Study: [View `reservoir_itaparica` Report (HTML)](https://htmlpreview.github.io/?https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/blob/main/reports/reservoir_itaparica.html)**
+
+    > An end-to-end data science project demonstrating how to forecast the Itaparica reservoir water levels. It covers exploratory data analysis, feature engineering, model fitting, and comparison against benchmarks.
+
+* **Technical Deep-Dive: [View `simulated_ts_classical_tests` Report (HTML)](https://htmlpreview.github.io/?https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/blob/main/reports/simulated_ts_classical_tests.html)**
+
+    > A detailed walkthrough of the implementation and validation of the Wald, Score, and Likelihood Ratio tests, replicating the simulation study from the original paper.
+
+### 2. Run Locally (After Installation)
+
+After installation, you can also see all available vignettes and run them interactively from your R console:
+    
 ```R
-# Lists all tutorials for this package
+# 1. Lists all tutorials for this package
 browseVignettes("BARMAJournalHydrology2024")
+
+# 2. Open a specific vignette
+vignette("reservoir_itaparica", package = "BARMAJournalHydrology2024")
+vignette("simulated_ts_classical_tests", package = "BARMAJournalHydrology2024")
 ```
 
-2. Key Examples
-
-There are two main vignettes that showcase the capabilities of this package:
-
- * `application`: (Portfolio Case Study) An end-to-end data science project demonstrating how to forecast the Itaparica reservoir water levels. It covers exploratory data analysis, feature engineering, model fitting, and comparison against benchmarks.
-
-* `classical_tests`: (Technical Deep-Dive) A detailed walkthrough of the implementation and validation of the Wald, Score, and Likelihood Ratio tests, replicating the simulation study from the original paper.
-
-3. Open a Specific Vignette
-
-You can open a specific vignette directly from your R console to view the full analysis and code.
-
-```R
-# Open the main application case study
-vignette("application", package = "BARMAJournalHydrology2024")
-
-# Open the technical deep-dive on hypothesis tests
-vignette("classical_tests", package = "BARMAJournalHydrology2024")
-```
-
----
+------------------------------------------------------------------------
 
 ## 🎓 Citation
 
-If you use this code or data in your research, please cite the original article:
+If you use this code or data in your research, please cite the original
+article:
 
-```bibtex
+``` bibtex
 @article{Costa+Cribari+Scher_2024,
   title     = {Test inferences and link function selection in dynamic beta modeling of seasonal hydro-environmental time series with temporary abnormal regimes},
   author    = {Costa, E. and Cribari-Neto, F. and Scher, V. T.},
@@ -151,18 +213,23 @@ If you use this code or data in your research, please cite the original article:
   year      = {2024},
   doi       = {10.1016/j.jhydrol.2024.131489}
 }
-
 ```
 
 ## 🤝 Contributing
-Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
+
+Contributions are welcome! If you find any issues or have suggestions
+for improvements, please open an issue or submit a pull request.
 
 ## 📄 License
-This project is licensed under the MIT License. See the LICENSE file for details.
+
+This project is licensed under the MIT License. See the LICENSE file for
+details.
 
 ## 📬 Contact
-For questions, suggestions, or issues related to the code, please contact:
+
+For questions, suggestions, or issues related to the code, please
+contact:
 
 Everton da Costa
 
-📧 everto.cost@gmail.com
+📧 <everto.cost@gmail.com>
