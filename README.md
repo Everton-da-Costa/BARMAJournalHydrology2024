@@ -3,10 +3,9 @@ BARMAJournalHydrology2024: A Package for Beta Autoregressive Moving Average Mode
 # BARMAJournalHydrology2024
 
 [![DOI](https://img.shields.io/badge/DOI-10.1016/j.jhydrol.2024.131489-blue.svg)](https://doi.org/10.1016/j.jhydrol.2024.131489)
-[![License:
-MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![R-CMD-check](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R-CMD-check.yaml)
 [![GitHub Downloads](https://img.shields.io/github/downloads/Everton-da-Costa/BARMAJournalHydrology2024/total.svg?logo=github&color=blue)](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/releases)
+[![R-CMD-check](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Everton-da-Costa/BARMAJournalHydrology2024/actions/workflows/R-CMD-check.yaml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This repository contains the R package and associated data for the
 scientific article:
